@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
     Avatar,
     Button,
@@ -8,13 +9,11 @@ import {
     Typography,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { axiosUser } from '../../../api/axiosUser';
+import { Link, useHistory } from 'react-router-dom';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { axiosUser } from '../../../api/axiosUser';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -46,23 +45,35 @@ const schema = yup.object().shape({
 
 const SignUp = () => {
     const classes = useStyles();
-    const { register, handleSubmit, errors } = useForm({
+    const { register, handleSubmit, errors, setError } = useForm({
         resolver: yupResolver(schema),
     });
+    const history = useHistory();
 
     const onSubmit = async (data) => {
-        const { username, password, fullname, email } = data;
-        console.log(data);
+        try {
+            const { username, password, fullname, email } = data;
 
-        const res = await axiosUser.post('/auth/signup', {
-            username,
-            password,
-            fullname,
-            email,
-        });
+            const res = await axiosUser.post('/auth/signup', {
+                username,
+                password,
+                fullname,
+                email,
+            });
 
-        console.log(res);
-        if (res.status === 'success') {
+            if (res.status === 'success') {
+                history.push('/login');
+            }
+        } catch (error) {
+            if (error.data.errors) {
+                for (let err of Object.keys(error.data.errors)) {
+                    setError(`${err}`, {
+                        type: 'apiValidate',
+                        message: error.data.errors[err],
+                    });
+                }
+            }
+            console.log(error);
         }
     };
 

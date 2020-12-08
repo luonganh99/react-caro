@@ -14,6 +14,10 @@ import { Link } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import FacebookLogin from 'react-facebook-login';
+import { GoogleLogin } from 'react-google-login';
+import { FACEBOOK_APP_ID, GOOGLE_CLIENT_ID } from '../../../config/auth.config';
+import { FaFacebookSquare } from 'react-icons/fa';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -27,11 +31,46 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%',
         marginTop: theme.spacing(1),
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
+    },
+    googleBtn: {
+        height: '50px',
+        width: '280px',
+        margin: theme.spacing(1),
+    },
+    facebookBtn: {
+        height: '50px',
+        width: '280px',
+        margin: theme.spacing(1),
+        display: 'flex',
+        alignItems: 'center',
+        color: 'rgba(0, 0, 0, 0.54)',
+        boxShadow: ' rgba(0, 0, 0, 0.24) 0px 2px 2px 0px, rgba(0, 0, 0, 0.24) 0px 0px 1px 0px',
+        padding: '0px',
+        borderRadius: '2px',
+        border: '1px solid transparent',
+        fontSize: '14px',
+        fontWeight: '500',
+        fontFamily: ' Roboto, sans-serif',
+        backgroundColor: 'rgb(255, 255, 255)',
+
+        '&:hover': {
+            cursor: 'pointer',
+            opacity: 0.9,
+        },
+    },
+    fbIcon: {
+        marginRight: '16px',
+        marginLeft: '10px',
+        fontSize: '20px',
+        color: '#4267B2',
+    },
+    separator: {
+        marginTop: theme.spacing(1),
     },
 }));
 
@@ -42,20 +81,69 @@ const schema = yup.object().shape({
 
 const Login = () => {
     const classes = useStyles();
-    const { register, handleSubmit, errors } = useForm({
+    const { register, handleSubmit, errors, setError } = useForm({
         resolver: yupResolver(schema),
     });
 
-    const onSubmit = async (data) => {
-        const { username, password } = data;
-        console.log(data);
-        const res = await axiosUser.post('/auth/login', {
-            username,
-            password,
-        });
+    console.log(errors);
 
-        if ((res.status = 'success')) {
-            console.log(res.data);
+    const onSubmit = async (data) => {
+        try {
+            const { username, password } = data;
+            const res = await axiosUser.post('/auth/login', {
+                username,
+                password,
+            });
+            if (res.status === 'success') {
+                console.log(res.data);
+            }
+        } catch (error) {
+            if (error.data.errors) {
+                for (let err of Object.keys(error.data.errors)) {
+                    setError(`${err}`, {
+                        type: 'apiValidate',
+                        message: error.data.errors[err],
+                    });
+                }
+            }
+            console.log(error);
+        }
+    };
+
+    const onGoogleSuccess = async (googleRes) => {
+        try {
+            const apiRes = await axiosUser.get('/auth/google', {
+                headers: {
+                    access_token: googleRes.accessToken,
+                },
+            });
+
+            if (apiRes.status === 'success') {
+                console.log(apiRes.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const onGoogleFailure = (googleRes) => {
+        console.log(googleRes);
+    };
+
+    const onFacebookSuccess = async (facebookRes) => {
+        try {
+            console.log(facebookRes);
+            const apiRes = await axiosUser.get('/auth/facebook', {
+                headers: {
+                    access_token: facebookRes.accessToken,
+                },
+            });
+
+            if (apiRes.status === 'success') {
+                console.log(apiRes.data);
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -112,6 +200,24 @@ const Login = () => {
                         </Grid>
                     </Grid>
                 </form>
+                <Typography variant="body1" className={classes.separator}>
+                    Or
+                </Typography>
+                <GoogleLogin
+                    clientId={GOOGLE_CLIENT_ID}
+                    buttonText="Login with Google"
+                    onSuccess={onGoogleSuccess}
+                    onFailure={onGoogleFailure}
+                    cookiePolicy="single_host_origin"
+                    className={classes.googleBtn}
+                />
+                <FacebookLogin
+                    appId={FACEBOOK_APP_ID}
+                    fields="name,email,picture"
+                    callback={onFacebookSuccess}
+                    icon={<FaFacebookSquare className={classes.fbIcon} />}
+                    cssClass={classes.facebookBtn}
+                />
             </div>
         </Container>
     );

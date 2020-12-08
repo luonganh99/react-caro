@@ -13,17 +13,19 @@ axiosUser.interceptors.request.use(
         return request;
     },
     (error) => {
-        throw error;
+        return Promise.reject(error.response);
     },
 );
 
 axiosUser.interceptors.response.use(
     (response) => {
-        if (response.data) {
+        console.log(response);
+
+        if (response && response.data) {
             return response.data;
         }
     },
     (error) => {
-        throw error;
+        return Promise.reject(error.response);
     },
 );
