@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-const api_user_base_url = process.env.REACT_APP_USER_BASE_URL || 'http://localhost:4000';
+const api_user_base_url = process.env.REACT_APP_USER_BASE_URL;
 
 const OnlineList = () => {
     const [userList, setUserList] = useState([]);
