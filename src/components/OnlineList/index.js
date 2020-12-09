@@ -31,13 +31,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+const api_user_base_url = process.env.API_USER_BASE_URL || 'http://localhost:4000';
 
 const OnlineList = () => {
     const [userList, setUserList] = useState([]);
     const classes = useStyles();
 
     useEffect(() => {
-        const socket = SocketIOClient('http://localhost:4000', {
+        const socket = SocketIOClient(api_user_base_url, {
             transports: ['websocket', 'polling', 'flashsocket'],
             withCredentials: true,
             extraHeaders: {

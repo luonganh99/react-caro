@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosAdmin = axios.create({
-    baseURL: 'http://localhost:4000/admin',
+    baseURL: process.env.API_ADMIN_BASE_URL || 'http://localhost:4000/admin',
 });
 
 axiosAdmin.interceptors.request.use(
