@@ -10,7 +10,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,6 +18,7 @@ import FacebookLogin from 'react-facebook-login';
 import { GoogleLogin } from 'react-google-login';
 import { FACEBOOK_APP_ID, GOOGLE_CLIENT_ID } from '../../../config/auth.config';
 import { FaFacebookSquare } from 'react-icons/fa';
+import { useAuthContext } from '../../../context/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -80,6 +81,8 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
+    const { onLogin } = useAuthContext();
+    const history = useHistory();
     const classes = useStyles();
     const { register, handleSubmit, errors, setError } = useForm({
         resolver: yupResolver(schema),
@@ -95,7 +98,8 @@ const Login = () => {
                 password,
             });
             if (res.status === 'success') {
-                console.log(res.data);
+                onLogin(res.data);
+                history.push('/onlineusers');
             }
         } catch (error) {
             if (error.data.errors) {
@@ -119,7 +123,8 @@ const Login = () => {
             });
 
             if (apiRes.status === 'success') {
-                console.log(apiRes.data);
+                onLogin(apiRes.data);
+                history.push('/onlineusers');
             }
         } catch (error) {
             console.log(error);
@@ -140,7 +145,8 @@ const Login = () => {
             });
 
             if (apiRes.status === 'success') {
-                console.log(apiRes.data);
+                onLogin(apiRes.data);
+                history.push('/onlineusers');
             }
         } catch (error) {
             console.log(error);
