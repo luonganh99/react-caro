@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+console.log(process.env.REACT_APP_ADMIN_BASE_URL);
+
 export const axiosAdmin = axios.create({
-    baseURL: process.env.API_ADMIN_BASE_URL || 'http://localhost:4000/admin',
+    baseURL: process.env.REACT_APP_ADMIN_BASE_URL || 'http://localhost:4000/admin',
 });
 
 axiosAdmin.interceptors.request.use(

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+console.log(process.env.REACT_APP_ADMIN_BASE_URL);
+
 export const axiosUser = axios.create({
-    baseURL: process.env.API_USER_BASE_URL || 'http://localhost:4000',
+    baseURL: process.env.REACT_APP_ADMIN_BASE_URL || 'http://localhost:4000',
 });
 
 axiosUser.interceptors.request.use(
