@@ -4,6 +4,7 @@ import OnlineList from '../../components/OnlineList';
 import PrivateRoute from '../../components/PrivateRoute';
 import Login from './Login';
 import SignUp from './SignUp';
+import ChatBox from './Game/ChatBox';
 
 const UserRoutes = () => {
     const match = useRouteMatch();
@@ -14,6 +15,7 @@ const UserRoutes = () => {
             <Route path={`${url}/login`} component={Login} />
             <Route path={`${url}/signup`} component={SignUp} />
             <PrivateRoute path={`${url}/onlineusers`} component={OnlineList} />
+            <Route path={`${url}/chatbox`} component={ChatBox} />
         </Switch>
     );
 };
