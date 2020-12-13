@@ -5,6 +5,7 @@ import PrivateRoute from '../../components/PrivateRoute';
 import Board from './Game/Board';
 import Login from './Login';
 import SignUp from './SignUp';
+import ChatBox from './Game/ChatBox';
 
 const UserRoutes = () => {
     const match = useRouteMatch();
@@ -16,6 +17,7 @@ const UserRoutes = () => {
             <Route path={`${url}/signup`} component={SignUp} />
             <Route path={`${url}/game`} component={Board} />
             <PrivateRoute path={`${url}/onlineusers`} component={OnlineList} />
+            <Route path={`${url}/chatbox`} component={ChatBox} />
         </Switch>
     );
 };
