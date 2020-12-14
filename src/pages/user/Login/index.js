@@ -99,7 +99,7 @@ const Login = () => {
             });
             if (res.status === 'success') {
                 onLogin(res.data);
-                history.push('/onlineusers');
+                history.push('/home');
             }
         } catch (error) {
             if (error.data.errors) {
@@ -124,7 +124,7 @@ const Login = () => {
 
             if (apiRes.status === 'success') {
                 onLogin(apiRes.data);
-                history.push('/onlineusers');
+                history.push('/home');
             }
         } catch (error) {
             console.log(error);
@@ -146,7 +146,7 @@ const Login = () => {
 
             if (apiRes.status === 'success') {
                 onLogin(apiRes.data);
-                history.push('/onlineusers');
+                history.push('/home');
             }
         } catch (error) {
             console.log(error);

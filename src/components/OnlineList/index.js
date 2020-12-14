@@ -9,8 +9,9 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import SocketIOClient from 'socket.io-client';
 import avatar from '../../assets/images/avatar.jpg';
+import { getOnlineUserReq, getOnlineUserRes } from '../../commons/socket';
+import { useAuthContext } from '../../context/AuthContext';
 import BadgeAvatar from '../BadgeAvatar';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,41 +31,28 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-const api_user_base_url = process.env.REACT_APP_USER_BASE_URL;
-
 const OnlineList = () => {
+    const { authData } = useAuthContext();
     const [userList, setUserList] = useState([]);
     const classes = useStyles();
 
     useEffect(() => {
-        const socket = SocketIOClient(api_user_base_url, {
-            transports: ['websocket', 'polling', 'flashsocket'],
-            withCredentials: true,
-            extraHeaders: {
-                'my-custom-header': 'abcd',
-            },
-            query: {
-                username: userInfo?.username || userInfo?.email,
-            },
-        });
-        socket.on('getOnlineUserRes', (list) => {
+        getOnlineUserReq();
+        getOnlineUserRes((err, data) => {
+            console.log(err);
+            if (err) return;
+            console.log(data);
             setUserList(
-                list
+                data
                     .map((uname) => uname[0])
                     .filter((uname) =>
                         !uname.includes('@')
-                            ? uname !== userInfo?.username
-                            : uname !== userInfo?.email,
+                            ? uname !== authData.userInfo.username
+                            : uname !== authData.userInfo.email,
                     ),
             );
         });
-        socket.emit('online');
-
-        return () => {
-            socket.emit('offline');
-        };
-    }, []);
+    }, [authData]);
 
     return (
         <Container className={classes.container}>
