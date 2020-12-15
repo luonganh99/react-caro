@@ -5,7 +5,6 @@ import { axiosUser } from '../../../api/axiosUser';
 const Home = () => {
     const history = useHistory();
     const [boardId, setBoardId] = useState('');
-    console.log('OUTPUT ~ file: index.js ~ line 9 ~ Home ~ boardId', boardId);
 
     const handleCreate = async () => {
         try {
@@ -34,7 +33,8 @@ const Home = () => {
                 onChange={(e) => setBoardId(e.target.value)}
             />
             <button onClick={handleJoinGame}>Join</button>
-            <Link to="/onlineusers"> Online List </Link>
+            <Link to="/online-user"> Online List </Link>
+            <Link to="/result">Result</Link>
         </div>
     );
 };

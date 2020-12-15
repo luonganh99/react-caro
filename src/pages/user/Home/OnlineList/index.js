@@ -9,10 +9,10 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import avatar from '../../assets/images/avatar.jpg';
-import { getOnlineUserReq, getOnlineUserRes } from '../../commons/socket';
-import { useAuthContext } from '../../context/AuthContext';
-import BadgeAvatar from '../BadgeAvatar';
+import avatar from '../../../../assets/images/avatar.jpg';
+import socket from '../../../../commons/socket';
+import { useAuthContext } from '../../../../context/AuthContext';
+import BadgeAvatar from '../../../../components/BadgeAvatar';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -37,11 +37,8 @@ const OnlineList = () => {
     const classes = useStyles();
 
     useEffect(() => {
-        getOnlineUserReq();
-        getOnlineUserRes((err, data) => {
-            console.log(err);
-            if (err) return;
-            console.log(data);
+        socket.emit('getOnlineUserReq');
+        socket.on('getOnlineUserRes', (data) => {
             setUserList(
                 data
                     .map((uname) => uname[0])
