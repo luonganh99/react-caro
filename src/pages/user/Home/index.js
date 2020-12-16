@@ -1,6 +1,8 @@
+import { Button, Container, TextField, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
+import './styles.scss';
 
 const Home = () => {
     const history = useHistory();
@@ -23,19 +25,56 @@ const Home = () => {
     };
 
     return (
-        <div>
-            <h1>Home Page</h1>
-            <button onClick={handleCreate}>Create game</button>
-            <input
-                type="number"
-                name="boardId"
-                value={boardId}
-                onChange={(e) => setBoardId(e.target.value)}
-            />
-            <button onClick={handleJoinGame}>Join</button>
-            <Link to="/online-user"> Online List </Link>
-            <Link to="/result">Result</Link>
-        </div>
+        <Container className="container">
+            <Typography variant="h2">Caro Online</Typography>
+            <Button
+                className="createGameBtn"
+                variant="contained"
+                color="primary"
+                onClick={handleCreate}
+            >
+                Create new game
+            </Button>
+            <div className="joinGame">
+                <TextField
+                    variant="outlined"
+                    size="small"
+                    label="Room ID"
+                    name="boardId"
+                    value={boardId}
+                    onChange={(e) => setBoardId(e.target.value)}
+                />
+                <Button
+                    className="joinGameBtn"
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleJoinGame}
+                >
+                    Join
+                </Button>
+            </div>
+            <div className="link">
+                <Link
+                    to="/online-user"
+                    className="onlineList"
+                    component={Button}
+                    variant="outlined"
+                    color="primary"
+                >
+                    {' '}
+                    Online List{' '}
+                </Link>
+                <Link
+                    to="/result"
+                    className="resultList"
+                    component={Button}
+                    variant="outlined"
+                    color="primary"
+                >
+                    Result
+                </Link>
+            </div>
+        </Container>
     );
 };
 

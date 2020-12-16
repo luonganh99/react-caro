@@ -9,6 +9,7 @@ import MessagesHistory from './MessagesHistory';
 const useStyles = makeStyles((theme) => ({
     rootChatBox: {
         maxWidth: '350px',
+        height: '500px',
     },
     sendMsgContainer: {
         display: 'flex',
@@ -16,33 +17,33 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const fakeMessages = [
-    {
-        sender: 'lanhnh',
-        content: 'Hi there',
-        isMine: false,
-    },
-    {
-        sender: 'sonnt',
-        content: 'Hi :D',
-        isMine: true,
-    },
-    {
-        sender: 'taidt',
-        content: 'How are you doing',
-        isMine: false,
-    },
-    {
-        sender: 'sonnt',
-        content: "Yeah I'm good",
-        isMine: true,
-    },
-    {
-        sender: 'sonnt',
-        content: 'Very longggg longgggg message here . . . . . ..  . . . . ',
-        isMine: true,
-    },
-];
+// const fakeMessages = [
+//     {
+//         sender: 'lanhnh',
+//         content: 'Hi there',
+//         isMine: false,
+//     },
+//     {
+//         sender: 'sonnt',
+//         content: 'Hi :D',
+//         isMine: true,
+//     },
+//     {
+//         sender: 'taidt',
+//         content: 'How are you doing',
+//         isMine: false,
+//     },
+//     {
+//         sender: 'sonnt',
+//         content: "Yeah I'm good",
+//         isMine: true,
+//     },
+//     {
+//         sender: 'sonnt',
+//         content: 'Very longggg longgggg message here . . . . . ..  . . . . ',
+//         isMine: true,
+//     },
+// ];
 
 const ChatBox = ({ boardId }) => {
     const classes = useStyles();

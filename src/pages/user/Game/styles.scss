@@ -1,5 +1,14 @@
+.playerInfo {
+    display: flex;
+
+    .host {
+        margin-right: 500px;
+    }
+}
+
 .gameplay {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-top: 10px;
 }

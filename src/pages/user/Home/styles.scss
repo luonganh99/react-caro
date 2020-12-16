@@ -1,0 +1,25 @@
+.container {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.createGameBtn {
+    margin-top: 40px !important;
+}
+
+.joinGame {
+    margin-top: 40px;
+
+    .joinGameBtn {
+        margin-left: 20px;
+    }
+}
+
+.link {
+    margin-top: 40px;
+    width: 20%;
+    display: flex;
+    justify-content: space-between;
+}

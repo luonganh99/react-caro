@@ -16,13 +16,13 @@ const ResultList = () => {
                 sortable: true,
             },
             {
-                name: 'HostID',
-                selector: 'hostId',
+                name: 'Hostname',
+                selector: 'hostname',
                 sortable: true,
             },
             {
-                name: 'GuestID',
-                selector: 'guestId',
+                name: 'Guestname',
+                selector: 'guestname',
                 sortable: true,
             },
             {
@@ -39,7 +39,7 @@ const ResultList = () => {
                 sortable: true,
             },
         ],
-        [],
+        [authData],
     );
 
     useEffect(() => {

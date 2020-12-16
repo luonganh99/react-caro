@@ -52,9 +52,10 @@ const Board = ({ chessman, boardId }) => {
                 return prevTurn === 'X' ? 'O' : 'X';
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lastPos]);
 
-    function renderSquare(pos, isHighlight) {
+    const renderSquare = (pos, isHighlight) => {
         return (
             <Square
                 isHighlight={isHighlight}
@@ -63,9 +64,9 @@ const Board = ({ chessman, boardId }) => {
                 onHandleClickSquare={() => onHandleClickSquare(pos)}
             />
         );
-    }
+    };
 
-    function onHandleClickSquare(pos) {
+    const onHandleClickSquare = (pos) => {
         console.log(turn, chessman);
         if (turn === chessman) {
             socket.emit('moveChessman', { boardId, chessman, pos });
@@ -81,9 +82,9 @@ const Board = ({ chessman, boardId }) => {
             setLastPos(pos);
             isChecked.current = true;
         }
-    }
+    };
 
-    function calculateWinner(squares, pos, chessman) {
+    const calculateWinner = (squares, pos, chessman) => {
         const { x, y } = pos;
         // check col
         let colCount = 1;
@@ -196,7 +197,7 @@ const Board = ({ chessman, boardId }) => {
         if (antiDiagCount >= 5) {
             return true;
         }
-    }
+    };
 
     let board = Array(BOARD_SIZE).fill(null);
     return (
