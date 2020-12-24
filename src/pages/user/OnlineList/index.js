@@ -9,10 +9,10 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import avatar from '../../../../assets/images/avatar.jpg';
-import socket from '../../../../commons/socket';
-import { useAuthContext } from '../../../../context/AuthContext';
-import BadgeAvatar from '../../../../components/BadgeAvatar';
+import avatar from '../../../assets/images/avatar.jpg';
+import socket from '../../../commons/socket';
+import { useAuthContext } from '../../../context/AuthContext';
+import BadgeAvatar from '../../../components/BadgeAvatar';
 
 const useStyles = makeStyles((theme) => ({
     container: {

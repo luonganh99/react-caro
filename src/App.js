@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AdminRoutes from './pages/admin';
 import UserRoutes from './pages/user';
 import AuthContextProvider from './context/AuthContext';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     return (

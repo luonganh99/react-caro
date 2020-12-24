@@ -39,8 +39,8 @@ const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
     confirmPassword: yup.string().oneOf([yup.ref('password'), null], "Password doesn't match"),
-    fullname: yup.string(),
-    email: yup.string().email('Email is not correct'),
+    fullname: yup.string().required('Fullname is required'),
+    email: yup.string().email('Email is not correct').required('Email is required'),
 });
 
 const SignUp = () => {
@@ -128,6 +128,7 @@ const SignUp = () => {
                         margin="normal"
                         inputRef={register}
                         fullWidth
+                        required
                         name="fullname"
                         label="Full Name"
                         error={!!errors?.fullname}
@@ -141,6 +142,7 @@ const SignUp = () => {
                         name="email"
                         label="Email"
                         type="email"
+                        required
                         error={!!errors?.email}
                         helperText={errors?.email?.message}
                     />

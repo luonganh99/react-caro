@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { axiosUser } from '../../../../api/axiosUser';
-import { useAuthContext } from '../../../../context/AuthContext';
+import { axiosUser } from '../../../api/axiosUser';
+import { useAuthContext } from '../../../context/AuthContext';
 
 const ResultList = () => {
     const { authData } = useAuthContext();

@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-console.log(process.env.REACT_APP_ADMIN_BASE_URL);
-
 export const axiosAdmin = axios.create({
     baseURL: process.env.REACT_APP_ADMIN_BASE_URL,
 });

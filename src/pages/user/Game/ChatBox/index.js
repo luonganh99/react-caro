@@ -45,9 +45,9 @@ const useStyles = makeStyles((theme) => ({
 //     },
 // ];
 
-const ChatBox = ({ boardId }) => {
+const ChatBox = ({ boardId, roomId }) => {
     const classes = useStyles();
-    const [listMessages, setListMessages] = useState([]);
+    const [listMessages, setListMessages] = useState(['1']);
     const { register, handleSubmit, reset } = useForm();
     const { authData } = useAuthContext();
 
@@ -64,16 +64,18 @@ const ChatBox = ({ boardId }) => {
     }, []);
 
     const onSendMyMessage = (data) => {
-        const { inputMessage } = data;
-        console.log(inputMessage);
-        const message = {
-            sender: authData.userInfo.username,
-            content: inputMessage,
-            isMine: true,
-        };
-        setListMessages(listMessages.concat(message));
-        socket.emit('sendMessage', { boardId, content: message.content });
-        reset({});
+        if (boardId) {
+            const { inputMessage } = data;
+            console.log(inputMessage);
+            const message = {
+                sender: authData.userInfo.username,
+                content: inputMessage,
+                isMine: true,
+            };
+            setListMessages(listMessages.concat(message));
+            socket.emit('sendMessage', { boardId, content: message.content, roomId });
+            reset({});
+        }
     };
 
     return (

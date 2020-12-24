@@ -5,7 +5,7 @@ import { BOARD_SIZE } from '../../../../config/board.config';
 import Square from './Square';
 import './styles.scss';
 
-const Board = ({ chessman, boardId }) => {
+const Board = ({ chessman, roomId, boardId }) => {
     const [squares, setSquares] = useState(Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill(null)));
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const [turn, setTurn] = useState('X');
@@ -13,6 +13,7 @@ const Board = ({ chessman, boardId }) => {
 
     useEffect(() => {
         socket.on('newMoveChessman', (data) => {
+            console.log(data);
             setSquares((prevSquares) => {
                 console.log('oldsquares ', prevSquares);
                 if (prevSquares[data.pos.x][data.pos.y]) return;
@@ -68,8 +69,8 @@ const Board = ({ chessman, boardId }) => {
 
     const onHandleClickSquare = (pos) => {
         console.log(turn, chessman);
-        if (turn === chessman) {
-            socket.emit('moveChessman', { boardId, chessman, pos });
+        if (boardId && turn === chessman) {
+            socket.emit('moveChessman', { roomId, boardId, chessman, pos });
             setSquares((prevSquares) => {
                 if (prevSquares[pos.x][pos.y]) return;
                 const newSquares = [...prevSquares];

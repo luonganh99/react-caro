@@ -1,27 +1,34 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
+import socket from '../../../commons/socket';
 import './styles.scss';
 
 const Home = () => {
     const history = useHistory();
     const [boardId, setBoardId] = useState('');
 
+    useEffect(() => {
+        socket.on('joinRoom', (roomId) => {
+            console.log(roomId);
+            history.push(`/room/${roomId}`);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleCreate = async () => {
-        try {
-            const res = await axiosUser.post('/boards');
+        // try {
+        //     const res = await axiosUser.post('/boards');
 
-            console.log(res.data.boardId);
-
-            history.push(`/games/${res.data.boardId}`);
-        } catch (error) {
-            console.log(error);
-        }
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        socket.emit('createRoom');
     };
 
     const handleJoinGame = () => {
-        history.push(`/games/${boardId}`);
+        history.push(`/room/${boardId}`);
     };
 
     return (
@@ -54,25 +61,25 @@ const Home = () => {
                 </Button>
             </div>
             <div className="link">
-                <Link
+                <Button
                     to="/online-user"
                     className="onlineList"
-                    component={Button}
+                    component={RouterLink}
                     variant="outlined"
                     color="primary"
                 >
                     {' '}
                     Online List{' '}
-                </Link>
-                <Link
+                </Button>
+                <Button
                     to="/result"
                     className="resultList"
-                    component={Button}
+                    component={RouterLink}
                     variant="outlined"
                     color="primary"
                 >
                     Result
-                </Link>
+                </Button>
             </div>
         </Container>
     );

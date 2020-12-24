@@ -1,12 +1,16 @@
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../components/PrivateRoute';
+import ActivateAccount from './ActivateAccount';
 import Game from './Game';
 import Home from './Home';
-import OnlineList from './Home/OnlineList';
-import ResultList from './Home/ResultList';
+import OnlineList from './OnlineList';
+import ResultList from './ResultList';
 import Login from './Login';
+import ForgotPassword from './Login/ForgotPassword';
+import ResetPassword from './ResetPassword';
 import SignUp from './SignUp';
+import Profile from './Profile';
 
 const UserRoutes = () => {
     const match = useRouteMatch();
@@ -14,11 +18,16 @@ const UserRoutes = () => {
 
     return (
         <Switch>
-            <Redirect from="/" exact to="/login" />
+            <Redirect from="/" exact to="/home" />
             <Route path={`${url}/login`} component={Login} />
             <Route path={`${url}/signup`} component={SignUp} />
+            <Route path={`${url}/verify-account/:hashToken`} component={ActivateAccount} />
+            <Route path={`${url}/forgot-password`} component={ForgotPassword} />
+            <Route path={`${url}/reset-password/:hashToken`} component={ResetPassword} />
+
             <PrivateRoute path={`${url}/home`} component={Home} />
-            <PrivateRoute path={`${url}/games/:boardId`} component={Game} />
+            <PrivateRoute path={`${url}/profile`} component={Profile} />
+            <PrivateRoute path={`${url}/room/:roomId`} component={Game} />
             <PrivateRoute path={`${url}/online-user`} component={OnlineList} />
             <PrivateRoute path={`${url}/result`} component={ResultList} />
         </Switch>
