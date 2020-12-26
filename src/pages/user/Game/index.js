@@ -6,11 +6,12 @@ import { useAuthContext } from '../../../context/AuthContext';
 import Board from './Board';
 import ChatBox from './ChatBox';
 import './styles.scss';
-import { Button, Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Avatar, Button, Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import InfoBox from './InfoBox';
 import UserInfo from './UserInfo';
 import { BOARD_SIZE } from '../../../config/board.config';
 import Countdown from 'react-countdown';
+import HistoryBox from './HistoryBox';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -49,10 +50,12 @@ const Game = () => {
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const [turn, setTurn] = useState('X');
     const [time, setTime] = useState(null);
+    const [listHistoryItem, setListHistoryItem] = useState([]);
+    const [viewers, setViewers] = useState([]);
     const isChecked = useRef(false);
     let countDownRef = useRef(null);
 
-    console.log(countDownRef);
+    console.log(viewers);
 
     useEffect(() => {
         console.log('useeffct ', countDownRef);
@@ -66,6 +69,8 @@ const Game = () => {
             setGuestReady(guest.isReady);
             setBoardId(boardId);
             setTime(config.time);
+            setViewers(roomInfo.viewers);
+            console.log(roomInfo.viewers);
 
             if (authData.userInfo.username === host.username) {
                 setChessman('X');
@@ -88,6 +93,15 @@ const Game = () => {
             console.log(data.pos);
             isChecked.current = true;
             setLastPos(data.pos);
+
+            setListHistoryItem((prelistHistoryItem) => {
+                const historyItem = {
+                    username: data.sender,
+                    chessman: data.chessman,
+                    pos: data.pos,
+                };
+                return [...prelistHistoryItem, historyItem];
+            });
 
             console.log(isChecked.current);
             console.log('start');
@@ -167,6 +181,7 @@ const Game = () => {
         console.log(turn, chessman);
         if (boardId && turn === chessman) {
             console.log('move chessman');
+            let username = isHost ? hostname : guestname;
             socket.emit('moveChessman', { roomId, boardId, chessman, pos });
 
             setSquares((prevSquares) => {
@@ -179,6 +194,16 @@ const Game = () => {
                 return newSquares;
             });
             setLastPos(pos);
+
+            //save item history move
+
+            const historyItem = {
+                username,
+                chessman,
+                pos,
+            };
+            const newListHistoryItem = [...listHistoryItem, historyItem];
+            setListHistoryItem(newListHistoryItem);
             isChecked.current = true;
         }
     };
@@ -313,13 +338,6 @@ const Game = () => {
 
     return (
         <Container>
-            <Countdown
-                date={Date.now() + time * 1000}
-                ref={countDownRef}
-                autoStart={false}
-                renderer={renderer}
-                onComplete={handleTimeout}
-            />
             <Grid container spacing={3}>
                 <Grid item xs={8}>
                     <Paper className={classes.paper}>
@@ -329,7 +347,17 @@ const Game = () => {
                             hostReady={hostReady}
                             guestname={guestname}
                             guestReady={guestReady}
-                        />
+                        ></UserInfo>
+                        <Typography component="h5" variant="h5">
+                            Time:{' '}
+                            <Countdown
+                                date={Date.now() + time * 1000}
+                                ref={countDownRef}
+                                autoStart={false}
+                                renderer={renderer}
+                                onComplete={handleTimeout}
+                            />
+                        </Typography>
                     </Paper>
                     <div className="ready">
                         <Button variant="contained" color="primary" onClick={handleToggleReady}>
@@ -346,7 +374,7 @@ const Game = () => {
 
                 <Grid item xs={4}>
                     <Paper className={classes.paper}>
-                        <InfoBox />
+                        <InfoBox viewers={viewers} />
                     </Paper>
                 </Grid>
             </Grid>
@@ -359,7 +387,9 @@ const Game = () => {
                 </Grid>
 
                 <Grid item xs={4}>
-                    <Paper className={classes.paper}></Paper>
+                    <Paper className={classes.paper}>
+                        <HistoryBox listHistoryItem={listHistoryItem}></HistoryBox>
+                    </Paper>
                     <Paper className={classes.paper}>
                         <ChatBox boardId={boardId} roomId={roomId} />
                     </Paper>
