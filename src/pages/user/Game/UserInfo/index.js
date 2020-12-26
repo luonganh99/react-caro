@@ -6,8 +6,6 @@ function UserInfo(props) {
     return (
         <div>
             {' '}
-            <Typography variant="h4">Time: 15</Typography>
-            
             <div className="playerInfo">
                 <Typography variant="body1" className="host">
                     Hostname: <span>{hostname}</span>

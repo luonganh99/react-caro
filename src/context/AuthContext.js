@@ -22,6 +22,7 @@ const AuthProvider = ({ children }) => {
         localStorage.setItem('userInfo', JSON.stringify(newAuthData.userInfo));
         socket.io.opts.query = {
             username: newAuthData.userInfo.username,
+            avatar: newAuthData.userInfo.avatar,
         };
         socket.disconnect();
         socket.connect();
