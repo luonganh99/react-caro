@@ -19,14 +19,15 @@ const useStyles = makeStyles((theme) => ({
 function InfoBox(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const { viewers } = props;
+    const { viewers, boardId } = props;
 
     return (
         <Card className={classes.root}>
             <div className={classes.details}>
+                ROOM INFO
                 <CardContent className={classes.content}>
                     <Typography component="h5" variant="h5">
-                        Room ID: 1234
+                        {boardId ? `BoardID: ${boardId}` : ''}
                     </Typography>
                 </CardContent>
                 <AvatarGroup max={4}>

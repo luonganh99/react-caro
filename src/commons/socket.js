@@ -12,6 +12,7 @@ let socket = SocketIOClient(baseURL, {
     query: {
         username: userInfo?.username || userInfo?.email || 'anonymous',
         avatar: userInfo?.avatar,
+        cups: userInfo?.cups,
     },
 });
 

@@ -23,6 +23,7 @@ const AuthProvider = ({ children }) => {
         socket.io.opts.query = {
             username: newAuthData.userInfo.username,
             avatar: newAuthData.userInfo.avatar,
+            cups: newAuthData.userInfo.cups,
         };
         socket.disconnect();
         socket.connect();
@@ -34,6 +35,8 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem('userInfo');
         setAuthData(initialAuthData);
     };
+
+    const resetAuthDate = () => {};
 
     const authDataValue = useMemo(() => ({ authData, onLogin, onLogout }), [authData]);
 

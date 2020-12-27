@@ -1,17 +1,18 @@
+import { Button, Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
+import Countdown from 'react-countdown';
 import { useHistory, useParams } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
 import socket from '../../../commons/socket';
+import { BOARD_SIZE } from '../../../config/board.config';
+import { RATE_HIGH, RATE_LOW } from '../../../config/game.config';
 import { useAuthContext } from '../../../context/AuthContext';
 import Board from './Board';
 import ChatBox from './ChatBox';
-import './styles.scss';
-import { Avatar, Button, Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
-import InfoBox from './InfoBox';
-import UserInfo from './UserInfo';
-import { BOARD_SIZE } from '../../../config/board.config';
-import Countdown from 'react-countdown';
 import HistoryBox from './HistoryBox';
+import InfoBox from './InfoBox';
+import './styles.scss';
+import UserInfo from './UserInfo';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,9 +25,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const postWinner = async (boardId) => {
+const postWinner = async (boardId, cups) => {
     try {
-        const res = await axiosUser.patch(`/boards/${boardId}`);
+        const res = await axiosUser.patch(`/boards/${boardId}`, { cups });
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const patchUserInfo = async (cups, wins, total) => {
+    try {
+        const res = await axiosUser.patch(`/users/patch`, { cups, wins, total });
         return res;
     } catch (error) {
         console.log(error);
@@ -38,11 +48,14 @@ const Game = () => {
     const { authData } = useAuthContext();
     const { roomId } = useParams();
     const history = useHistory();
+
     const [isHost, setIsHost] = useState(false);
     const [isViewer, setIsViewer] = useState(false);
     const [chessman, setChessman] = useState('O');
     const [guestname, setGuestname] = useState(null);
+    const [guestAvatar, setGuestAvatar] = useState('');
     const [hostname, setHostname] = useState(null);
+    const [hostAvatar, setHostAvatar] = useState('');
     const [boardId, setBoardId] = useState(null);
     const [hostReady, setHostReady] = useState(false);
     const [guestReady, setGuestReady] = useState(false);
@@ -52,25 +65,28 @@ const Game = () => {
     const [time, setTime] = useState(null);
     const [listHistoryItem, setListHistoryItem] = useState([]);
     const [viewers, setViewers] = useState([]);
+    const [hostCups, setHostCups] = useState(null);
+    const [guestCups, setGuestCups] = useState(null);
+    const [isWinner, setIsWinner] = useState(null);
     const isChecked = useRef(false);
     let countDownRef = useRef(null);
 
-    console.log(viewers);
-
     useEffect(() => {
-        console.log('useeffct ', countDownRef);
         socket.emit('joinRoom', roomId);
 
         socket.on('getRoomInfo', (roomInfo) => {
-            const { host, guest, boardId, config } = roomInfo;
+            const { host, guest, config } = roomInfo;
             setHostname(host.username);
             setHostReady(host.isReady);
             setGuestname(guest.username);
             setGuestReady(guest.isReady);
-            setBoardId(boardId);
+            setBoardId(roomInfo.boardId);
             setTime(config.time);
             setViewers(roomInfo.viewers);
-            console.log(roomInfo.viewers);
+            setHostAvatar(host.avatar);
+            setGuestAvatar(guest.avatar);
+            setHostCups(host.cups);
+            setGuestCups(guest.cups);
 
             if (authData.userInfo.username === host.username) {
                 setChessman('X');
@@ -143,10 +159,12 @@ const Game = () => {
             console.log(isChecked.current);
             console.log('checkwin ', squares, lastPos, turn);
             if (calculateWinner(squares, lastPos, turn)) {
-                alert(`${turn} won`);
                 if (turn === chessman) {
-                    postWinner(boardId);
+                    setIsWinner(true);
+                } else {
+                    setIsWinner(false);
                 }
+                alert(`${turn} won`);
             }
             setTurn((prevTurn) => {
                 console.log('prev turn ', prevTurn);
@@ -156,6 +174,41 @@ const Game = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lastPos]);
+
+    useEffect(() => {
+        let rate;
+        if (
+            (isHost && isWinner && hostCups > guestCups) ||
+            (!isHost && isWinner && hostCups < guestCups)
+        ) {
+            rate = RATE_LOW;
+        } else {
+            rate = RATE_HIGH;
+        }
+        console.log(rate);
+        const cups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+        console.log(cups);
+        if (isWinner) {
+            postWinner(boardId, cups);
+            patchUserInfo(
+                authData.userInfo.cups + cups,
+                authData.userInfo.wins + 1,
+                authData.userInfo.total + 1,
+            );
+            socket.emit('updateRoom', {
+                newCups: cups,
+                isHost,
+                roomId,
+            });
+        } else {
+            patchUserInfo(
+                authData.userInfo.cups - cups,
+                authData.userInfo.wins,
+                authData.userInfo.total + 1,
+            );
+        }
+        countDownRef.current.stop();
+    }, [isWinner]);
 
     const handleToggleReady = () => {
         if (isHost) {
@@ -324,10 +377,10 @@ const Game = () => {
     };
 
     const handleTimeout = () => {
-        console.log(turn);
         if (turn !== chessman) {
-            postWinner(boardId);
-            console.log('Win win win');
+            setIsWinner(true);
+        } else {
+            setIsWinner(false);
         }
         alert(`${turn === 'X' ? 'O' : 'X'} won`);
     };
@@ -347,6 +400,10 @@ const Game = () => {
                             hostReady={hostReady}
                             guestname={guestname}
                             guestReady={guestReady}
+                            hostAvatar={hostAvatar}
+                            guestAvatar={guestAvatar}
+                            hostCups={hostCups}
+                            guestCups={guestCups}
                         ></UserInfo>
                         <Typography component="h5" variant="h5">
                             Time:{' '}
@@ -374,7 +431,7 @@ const Game = () => {
 
                 <Grid item xs={4}>
                     <Paper className={classes.paper}>
-                        <InfoBox viewers={viewers} />
+                        <InfoBox viewers={viewers} boardId={boardId} />
                     </Paper>
                 </Grid>
             </Grid>
