@@ -3,7 +3,7 @@ import {List, Datagrid, TextField, DateField, EditButton, DeleteButton} from 're
 
 const UserList = (props) => {
     return <List {...props}>
-        <Datagrid>
+        <Datagrid rowClick="edit">
             <TextField source={'userId'}/>
             <TextField source={'username'}/>
             <TextField source={'fullname'}/>
