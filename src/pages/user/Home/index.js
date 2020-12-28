@@ -1,4 +1,5 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
+import { VideogameAssetRounded, ViewList, ViewListRounded } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
@@ -7,7 +8,7 @@ import './styles.scss';
 
 const Home = () => {
     const history = useHistory();
-    const [boardId, setBoardId] = useState('');
+    // const [boardId, setBoardId] = useState('');
 
     useEffect(() => {
         socket.on('joinRoom', (roomId) => {
@@ -17,24 +18,68 @@ const Home = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleCreate = async () => {
-        // try {
-        //     const res = await axiosUser.post('/boards');
+    // const handleCreate = async () => {
+    //     // try {
+    //     //     const res = await axiosUser.post('/boards');
 
-        // } catch (error) {
-        //     console.log(error);
-        // }
-        socket.emit('createRoom');
-    };
+    //     // } catch (error) {
+    //     //     console.log(error);
+    //     // }
+    //     socket.emit('createRoom');
+    // };
 
-    const handleJoinGame = () => {
-        history.push(`/room/${boardId}`);
+    // const handleJoinGame = () => {
+    //     history.push(`/room/${boardId}`);
+    // };
+
+    // TODO: Create play now button
+    const handlePlayNowClick = () => {
+        socket.emit('playNow');
     };
 
     return (
         <Container className="container">
-            <Typography variant="h2">Caro Online</Typography>
+            <Typography className="title" variant="h1" color="primary">
+                Caro Online
+            </Typography>
+
             <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={<VideogameAssetRounded />}
+                onClick={handlePlayNowClick}
+                className="btn-playnow"
+            >
+                Play Now
+            </Button>
+
+            <div className="btn-group">
+                <Button
+                    className="btn-room"
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    startIcon={<ViewListRounded />}
+                    component={RouterLink}
+                    to="/room"
+                >
+                    Room
+                </Button>
+
+                <Button
+                    className="btn-rank"
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    component={RouterLink}
+                    to="/rank"
+                >
+                    Rank
+                </Button>
+            </div>
+
+            {/* <Button
                 className="createGameBtn"
                 variant="contained"
                 color="primary"
@@ -80,7 +125,7 @@ const Home = () => {
                 >
                     Result
                 </Button>
-            </div>
+            </div> */}
         </Container>
     );
 };

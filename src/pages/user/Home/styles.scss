@@ -3,23 +3,50 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
 
-.createGameBtn {
-    margin-top: 40px !important;
-}
+    .title {
+        margin-top: 100px;
+        font-weight: 500;
+    }
 
-.joinGame {
-    margin-top: 40px;
+    .btn-playnow {
+        margin-top: 40px;
+        width: 250px;
+        height: 60px;
+    }
 
-    .joinGameBtn {
-        margin-left: 20px;
+    .btn-group {
+        margin-top: 40px;
+
+        .btn-room {
+            margin-right: 15px;
+            width: 200px;
+            height: 50px;
+        }
+
+        .btn-rank {
+            margin-left: 15px;
+            width: 200px;
+            height: 50px;
+        }
     }
 }
 
-.link {
-    margin-top: 40px;
-    width: 20%;
-    display: flex;
-    justify-content: space-between;
-}
+// .createGameBtn {
+//     margin-top: 40px !important;
+// }
+
+// .joinGame {
+//     margin-top: 40px;
+
+//     .joinGameBtn {
+//         margin-left: 20px;
+//     }
+// }
+
+// .link {
+//     margin-top: 40px;
+//     width: 20%;
+//     display: flex;
+//     justify-content: space-between;
+// }
