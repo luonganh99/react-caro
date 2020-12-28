@@ -25,27 +25,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const postWinner = async (boardId, cups) => {
-    try {
-        const res = await axiosUser.patch(`/boards/${boardId}`, { cups });
-        return res;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-const patchUserInfo = async (cups, wins, total) => {
-    try {
-        const res = await axiosUser.patch(`/users/patch`, { cups, wins, total });
-        return res;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
 const Game = () => {
     const classes = useStyles();
-    const { authData } = useAuthContext();
+    const { authData, resetAuthData } = useAuthContext();
     const { roomId } = useParams();
     const history = useHistory();
 
@@ -72,7 +54,7 @@ const Game = () => {
     let countDownRef = useRef(null);
 
     useEffect(() => {
-        socket.emit('joinRoom', roomId);
+        socket.emit('joinRoom', { roomId, cups: authData.userInfo.cups });
 
         socket.on('getRoomInfo', (roomInfo) => {
             const { host, guest, config } = roomInfo;
@@ -176,38 +158,59 @@ const Game = () => {
     }, [lastPos]);
 
     useEffect(() => {
-        let rate;
-        if (
-            (isHost && isWinner && hostCups > guestCups) ||
-            (!isHost && isWinner && hostCups < guestCups)
-        ) {
-            rate = RATE_LOW;
-        } else {
-            rate = RATE_HIGH;
+        const postWinner = async (boardId, cups) => {
+            try {
+                const res = await axiosUser.patch(`/boards/${boardId}`, { cups });
+                return res;
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const patchUserInfo = async (cups, wins, total) => {
+            try {
+                await axiosUser.patch(`/users/patch`, { cups, wins, total });
+                const res = await axiosUser.get(`/users/${authData.userInfo.userId}`);
+                resetAuthData(res);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        if (isWinner !== null) {
+            let rate;
+            if (
+                (isHost && isWinner && hostCups > guestCups) ||
+                (!isHost && isWinner && hostCups < guestCups)
+            ) {
+                rate = RATE_LOW;
+            } else {
+                rate = RATE_HIGH;
+            }
+            console.log(rate);
+            const cups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+            console.log(cups);
+            if (isWinner === true) {
+                postWinner(boardId, cups);
+                patchUserInfo(
+                    authData.userInfo.cups + cups,
+                    authData.userInfo.wins + 1,
+                    authData.userInfo.total + 1,
+                );
+                socket.emit('updateRoom', {
+                    newCups: cups,
+                    isHost,
+                    roomId,
+                });
+            } else if (isWinner === false) {
+                patchUserInfo(
+                    authData.userInfo.cups - cups,
+                    authData.userInfo.wins,
+                    authData.userInfo.total + 1,
+                );
+            }
+            countDownRef.current.stop();
         }
-        console.log(rate);
-        const cups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
-        console.log(cups);
-        if (isWinner) {
-            postWinner(boardId, cups);
-            patchUserInfo(
-                authData.userInfo.cups + cups,
-                authData.userInfo.wins + 1,
-                authData.userInfo.total + 1,
-            );
-            socket.emit('updateRoom', {
-                newCups: cups,
-                isHost,
-                roomId,
-            });
-        } else {
-            patchUserInfo(
-                authData.userInfo.cups - cups,
-                authData.userInfo.wins,
-                authData.userInfo.total + 1,
-            );
-        }
-        countDownRef.current.stop();
     }, [isWinner]);
 
     const handleToggleReady = () => {

@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
 import socket from '../../../commons/socket';
+import { useAuthContext } from '../../../context/AuthContext';
 import './styles.scss';
 
 const Home = () => {
     const history = useHistory();
+    const { authData } = useAuthContext();
     // const [boardId, setBoardId] = useState('');
 
     useEffect(() => {
@@ -34,7 +36,7 @@ const Home = () => {
 
     // TODO: Create play now button
     const handlePlayNowClick = () => {
-        socket.emit('playNow');
+        socket.emit('playNow', { cups: authData.userInfo.cups });
     };
 
     return (
