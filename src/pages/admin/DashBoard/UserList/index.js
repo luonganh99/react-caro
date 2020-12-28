@@ -10,7 +10,7 @@ const UserFilter = (props) => (
 
 const UserList = (props) => {
     return <List {...props} pagination={false} filters={<UserFilter />}>
-        <Datagrid>
+        <Datagrid rowClick={"show"}>
             <TextField source={'userId'}/>
             <TextField source={'username'}/>
             <TextField source={'fullname'}/>
