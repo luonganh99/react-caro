@@ -28,7 +28,7 @@ const Profile = ({ userInfo, open, onClose }) => {
             TransitionComponent={Transition}
             keepMounted
         >
-            {userInfo && (
+            {
                 <DialogContent className="content">
                     <div className="avatar-group">
                         <Avatar
@@ -82,7 +82,7 @@ const Profile = ({ userInfo, open, onClose }) => {
 
                     <History userInfo={userInfo} />
                 </DialogContent>
-            )}
+            }
         </Dialog>
     );
 };

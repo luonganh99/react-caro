@@ -20,21 +20,6 @@ const Home = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // const handleCreate = async () => {
-    //     // try {
-    //     //     const res = await axiosUser.post('/boards');
-
-    //     // } catch (error) {
-    //     //     console.log(error);
-    //     // }
-    //     socket.emit('createRoom');
-    // };
-
-    // const handleJoinGame = () => {
-    //     history.push(`/room/${boardId}`);
-    // };
-
-    // TODO: Create play now button
     const handlePlayNowClick = () => {
         socket.emit('playNow', { cups: authData.userInfo.cups });
     };

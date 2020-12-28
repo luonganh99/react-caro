@@ -2,7 +2,6 @@ import { AppBar, Avatar, IconButton, makeStyles, Toolbar, Typography } from '@ma
 import { ExitToApp } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { axiosUser } from '../../api/axiosUser';
 import avatar from '../../assets/images/avatar.jpg';
 import { useAuthContext } from '../../context/AuthContext';
 import Profile from './Profile';
@@ -27,19 +26,12 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = () => {
     const { authData, onLogout } = useAuthContext();
-    const [userInfo, setUserInfo] = useState(null);
     const classes = useStyles();
 
     const [openProfile, setOpenProfile] = useState(false);
 
     const handleOpenProfile = async () => {
-        try {
-            const res = await axiosUser.get(`/users/${authData.userInfo.userId}`);
-            setUserInfo(res.data.userInfo);
-            setOpenProfile(true);
-        } catch (error) {
-            console.log(error);
-        }
+        setOpenProfile(true);
     };
 
     const handleCloseProfile = () => {
@@ -77,7 +69,11 @@ const Header = () => {
                     <Typography variant="body1">Logout</Typography>
                 </IconButton>
 
-                <Profile userInfo={userInfo} open={openProfile} onClose={handleCloseProfile} />
+                <Profile
+                    userInfo={authData.userInfo}
+                    open={openProfile}
+                    onClose={handleCloseProfile}
+                />
             </Toolbar>
         </AppBar>
     );

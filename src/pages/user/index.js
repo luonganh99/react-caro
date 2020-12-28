@@ -7,7 +7,7 @@ import Home from './Home';
 import Login from './Login';
 import ForgotPassword from './Login/ForgotPassword';
 import ResetPassword from './ResetPassword';
-import ResultList from './ResultList';
+import RoomList from './RoomList';
 import SignUp from './SignUp';
 
 const UserRoutes = () => {
@@ -24,9 +24,8 @@ const UserRoutes = () => {
             <Route path={`${url}/reset-password/:hashToken`} component={ResetPassword} />
 
             <PrivateRoute path={`${url}/home`} component={Home} />
+            <PrivateRoute path={`${url}/room`} exact component={RoomList} />
             <PrivateRoute path={`${url}/room/:roomId`} component={Game} />
-            {/* <PrivateRoute path={`${url}/online-user`} component={OnlineList} /> */}
-            <PrivateRoute path={`${url}/result`} component={ResultList} />
         </Switch>
     );
 };
