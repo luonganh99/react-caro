@@ -47,12 +47,13 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatBox = ({ boardId, roomId }) => {
     const classes = useStyles();
-    const [listMessages, setListMessages] = useState(['1']);
+    const [listMessages, setListMessages] = useState([]);
     const { register, handleSubmit, reset } = useForm();
     const { authData } = useAuthContext();
 
     useEffect(() => {
         socket.on('newMessage', (data) => {
+            console.log('newMessage', data);
             setListMessages((prevListMessages) =>
                 prevListMessages.concat({
                     sender: data.sender,

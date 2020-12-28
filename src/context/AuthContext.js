@@ -36,6 +36,8 @@ const AuthProvider = ({ children }) => {
         setAuthData(initialAuthData);
     };
 
+    const resetAuthDate = () => {};
+
     const authDataValue = useMemo(() => ({ authData, onLogin, onLogout }), [authData]);
 
     return (
