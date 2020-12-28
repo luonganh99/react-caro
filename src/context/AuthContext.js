@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { axiosUser } from '../api/axiosUser';
 import socket from '../commons/socket';
 
 export const AuthContext = createContext(null);
@@ -23,7 +24,6 @@ const AuthProvider = ({ children }) => {
         socket.io.opts.query = {
             username: newAuthData.userInfo.username,
             avatar: newAuthData.userInfo.avatar,
-            cups: newAuthData.userInfo.cups,
         };
         socket.disconnect();
         socket.connect();
@@ -36,9 +36,14 @@ const AuthProvider = ({ children }) => {
         setAuthData(initialAuthData);
     };
 
-    const resetAuthDate = () => {};
+    const resetAuthData = (userInfo) => {
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        setAuthData({ userInfo });
+    };
 
-    const authDataValue = useMemo(() => ({ authData, onLogin, onLogout }), [authData]);
+    const authDataValue = useMemo(() => ({ authData, onLogin, onLogout, resetAuthData }), [
+        authData,
+    ]);
 
     return (
         <AuthContext.Provider value={authDataValue}>{!loading && children}</AuthContext.Provider>

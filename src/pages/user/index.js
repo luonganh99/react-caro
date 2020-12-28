@@ -4,13 +4,11 @@ import PrivateRoute from '../../components/PrivateRoute';
 import ActivateAccount from './ActivateAccount';
 import Game from './Game';
 import Home from './Home';
-import OnlineList from './OnlineList';
-import ResultList from './ResultList';
 import Login from './Login';
 import ForgotPassword from './Login/ForgotPassword';
 import ResetPassword from './ResetPassword';
+import RoomList from './RoomList';
 import SignUp from './SignUp';
-import Profile from './Profile';
 
 const UserRoutes = () => {
     const match = useRouteMatch();
@@ -26,10 +24,8 @@ const UserRoutes = () => {
             <Route path={`${url}/reset-password/:hashToken`} component={ResetPassword} />
 
             <PrivateRoute path={`${url}/home`} component={Home} />
-            <PrivateRoute path={`${url}/profile`} component={Profile} />
+            <PrivateRoute path={`${url}/room`} exact component={RoomList} />
             <PrivateRoute path={`${url}/room/:roomId`} component={Game} />
-            <PrivateRoute path={`${url}/online-user`} component={OnlineList} />
-            <PrivateRoute path={`${url}/result`} component={ResultList} />
         </Switch>
     );
 };

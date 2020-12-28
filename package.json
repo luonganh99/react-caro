@@ -11,6 +11,7 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.5.0",
     "axios": "^0.21.0",
+    "dayjs": "^1.9.7",
     "node-sass": "^4.14.1",
     "ra-data-simple-rest": "^3.10.4",
     "react": "^17.0.1",
