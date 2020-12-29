@@ -9,18 +9,10 @@ const PostShowActions = ({ basePath, data, resource }) => {
 
     const history = useHistory();
 
-    const handleViewBtnClick = () => {
-        console.log("base path: ", basePath)
-        console.log("data: ", data)
-        console.log("resource: ", resource)
-        history.push(`${basePath}/${data.userId}/history`)
-    }
-
     return(
         <TopToolbar>
             <EditButton basePath={basePath} record={data} />
             {/* Add your custom actions */}
-            <Button color="primary" onClick={handleViewBtnClick}>View game history</Button>
         </TopToolbar>
     );
 }
