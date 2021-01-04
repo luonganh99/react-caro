@@ -8,6 +8,14 @@ const useStyle = makeStyles({
     },
     inline: {
         display: 'inline',
+        fontWeight: 'bold',
+    },
+    listItem: {
+        paddingTop: '5px',
+        paddingBottom: '5px',
+    },
+    listItemText: {
+        margin: '0px 0px',
     },
 });
 
@@ -16,8 +24,9 @@ const ChatMessage = ({ message }) => {
     const classes = useStyle();
 
     return (
-        <ListItem alignItems="flex-end">
+        <ListItem alignItems="flex-end" className={classes.listItem}>
             <ListItemText
+                className={classes.listItemText}
                 secondary={
                     <React.Fragment>
                         <Typography

@@ -35,9 +35,11 @@ const RoomList = () => {
 
     const [loading, setLoading] = useState(false);
     const [roomList, setRoomList] = useState([]);
+    const [selectedRoomId, setSelectedRoomId] = useState(null);
 
     const [openCreateForm, setOpenCreateForm] = useState(false);
     const [openJoinForm, setOpenJoinForm] = useState(false);
+    const [openPasswordForm, setOpenPasswordForm] = useState(false);
 
     const columns = useMemo(
         () => [
@@ -45,6 +47,10 @@ const RoomList = () => {
                 name: 'RoomID',
                 selector: 'roomId',
                 sortable: true,
+            },
+            {
+                name: 'Password',
+                selector: 'password',
             },
             {
                 name: 'Host',
@@ -79,20 +85,20 @@ const RoomList = () => {
             for (let roomId in roomList) {
                 updatedRoomList.push({
                     roomId,
+                    password: roomList[roomId].config.password ? 'Yes' : 'No',
                     hostname: roomList[roomId].host.username,
-                    status: roomList[roomId].boardId ? 'Playing' : 'Waiting',
+                    status: roomList[roomId].board.boardId ? 'Playing' : 'Waiting',
                     slot: roomList[roomId].guest.username ? '2/2' : '1/2',
                     viewer: roomList[roomId].viewers.length,
                 });
             }
-            console.log(updatedRoomList);
+            console.log('roomlist ma ta ', updatedRoomList);
             setRoomList(updatedRoomList);
             setLoading(false);
         });
 
-        socket.on('joinRoom', (roomId) => {
-            console.log(roomId);
-            history.push(`/room/${roomId}`);
+        socket.on('joinRoom', ({ roomId, password }) => {
+            history.push(`/room?roomId=${roomId}&password=${password}`);
         });
 
         socket.on('joinRoomError', (type) => {
@@ -101,7 +107,7 @@ const RoomList = () => {
             if (type === 'wrongRoomId') {
                 setError('roomId', {
                     type,
-                    message: "Cant't find room with this roomId. Please try again!",
+                    message: "Can't find room with this RoomID. Please try again!",
                 });
             } else {
                 setError('password', {
@@ -110,6 +116,10 @@ const RoomList = () => {
                 });
             }
         });
+
+        return () => {
+            socket.removeAllListeners();
+        };
     }, []);
 
     const handleOpenCreateForm = () => {
@@ -143,15 +153,42 @@ const RoomList = () => {
 
     const handleCloseJoinForm = () => {
         setOpenJoinForm(false);
+        reset({
+            password: '',
+            roomId: '',
+        });
     };
 
     const handleSubmitJoinGame = (data) => {
-        socket.emit('joinRoom', {
+        socket.emit('checkRoom', {
             roomId: data.roomId,
-            password: data.password,
-            cups: authData.userInfo.cups,
+            password: data.password ? data.password : null,
         });
-        // handleCloseJoinForm();
+    };
+
+    const handleClosePasswordForm = () => {
+        setOpenPasswordForm(false);
+        reset({
+            password: '',
+        });
+    };
+
+    const handleSubmitPasswordGame = (data) => {
+        socket.emit('checkRoom', {
+            roomId: selectedRoomId,
+            password: data.password ? data.password : null,
+        });
+    };
+
+    const handleRowClick = (row) => {
+        console.log(row);
+
+        if (row.password === 'Yes') {
+            setSelectedRoomId(row.roomId);
+            setOpenPasswordForm(true);
+        } else {
+            history.push(`/room?roomId=${row.roomId}&password=${null}`);
+        }
     };
 
     return (
@@ -167,7 +204,14 @@ const RoomList = () => {
             </div>
 
             <div className="content">
-                <DataTable columns={columns} data={roomList} progressPending={loading} />
+                <DataTable
+                    columns={columns}
+                    data={roomList}
+                    progressPending={loading}
+                    onRowClicked={handleRowClick}
+                    pointerOnHover
+                    highlightOnHover
+                />
             </div>
 
             <Dialog
@@ -230,6 +274,9 @@ const RoomList = () => {
                         name="roomId"
                         inputRef={register}
                         autoComplete="off"
+                        error={!!errors?.roomId}
+                        helperText={errors?.roomId?.message}
+                        required={true}
                     />
                     <InputLabel>Password</InputLabel>
                     <TextField
@@ -237,6 +284,8 @@ const RoomList = () => {
                         name="password"
                         inputRef={register}
                         autoComplete="off"
+                        error={!!errors?.password}
+                        helperText={errors?.password?.message}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -244,6 +293,34 @@ const RoomList = () => {
                         Cancel
                     </Button>
                     <Button onClick={handleSubmit(handleSubmitJoinGame)} color="primary">
+                        Join
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                fullWidth={true}
+                open={openPasswordForm}
+                onClose={handleClosePasswordForm}
+                aria-labelledby="password-form"
+            >
+                <DialogTitle id="password-form">Password</DialogTitle>
+                <DialogContent>
+                    <InputLabel>Password</InputLabel>
+                    <TextField
+                        margin="dense"
+                        name="password"
+                        inputRef={register}
+                        autoComplete="off"
+                        error={!!errors?.password}
+                        helperText={errors?.password?.message}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClosePasswordForm} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit(handleSubmitPasswordGame)} color="primary">
                         Join
                     </Button>
                 </DialogActions>

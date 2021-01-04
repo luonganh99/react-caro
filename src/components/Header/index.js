@@ -69,11 +69,13 @@ const Header = () => {
                     <Typography variant="body1">Logout</Typography>
                 </IconButton>
 
-                <Profile
-                    userInfo={authData.userInfo}
-                    open={openProfile}
-                    onClose={handleCloseProfile}
-                />
+                {openProfile && (
+                    <Profile
+                        userInfo={authData.userInfo}
+                        open={openProfile}
+                        onClose={handleCloseProfile}
+                    />
+                )}
             </Toolbar>
         </AppBar>
     );

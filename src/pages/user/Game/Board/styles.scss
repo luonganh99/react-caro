@@ -3,6 +3,12 @@ ul {
     padding-left: 30px;
 }
 
+.board-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .board-row:after {
     clear: both;
     content: '';
@@ -41,14 +47,14 @@ ul {
     flex-direction: row;
 }
 
-.game-info {
-    margin-left: 20px;
-}
-
 .bold-text {
     font-weight: bold;
 }
 
 .highlight {
     color: rgb(44, 235, 19);
+}
+
+.board {
+    padding: 20px 0px;
 }

@@ -10,8 +10,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             {...rest}
             render={(props) =>
                 Object.keys(authData).length !== 0 ? (
-                    <Layout>
-                        <Component {...props} />
+                    <Layout {...props}>
+                        <Component />
                     </Layout>
                 ) : (
                     <Redirect to="/login" />

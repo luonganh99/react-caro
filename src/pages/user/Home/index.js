@@ -1,5 +1,10 @@
 import { Button, Container, TextField, Typography } from '@material-ui/core';
-import { VideogameAssetRounded, ViewList, ViewListRounded } from '@material-ui/icons';
+import {
+    EqualizerRounded,
+    VideogameAssetRounded,
+    ViewList,
+    ViewListRounded,
+} from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
@@ -13,10 +18,13 @@ const Home = () => {
     // const [boardId, setBoardId] = useState('');
 
     useEffect(() => {
-        socket.on('joinRoom', (roomId) => {
-            console.log(roomId);
-            history.push(`/room/${roomId}`);
+        socket.on('joinRoom', ({ roomId, password }) => {
+            history.push(`/room?roomId=${roomId}&password=${password}`);
         });
+
+        return () => {
+            socket.removeAllListeners();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -49,7 +57,7 @@ const Home = () => {
                     size="large"
                     startIcon={<ViewListRounded />}
                     component={RouterLink}
-                    to="/room"
+                    to="/room-list"
                 >
                     Room
                 </Button>
@@ -61,6 +69,7 @@ const Home = () => {
                     size="large"
                     component={RouterLink}
                     to="/rank"
+                    startIcon={<EqualizerRounded />}
                 >
                     Rank
                 </Button>

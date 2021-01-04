@@ -1,182 +1,239 @@
-import { Button, Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Container, Grid, makeStyles, Paper } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
-import Countdown from 'react-countdown';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { axiosUser } from '../../../api/axiosUser';
 import socket from '../../../commons/socket';
 import { BOARD_SIZE } from '../../../config/board.config';
 import { RATE_HIGH, RATE_LOW } from '../../../config/game.config';
 import { useAuthContext } from '../../../context/AuthContext';
+import useQuery from '../../../hooks/useQuery';
 import Board from './Board';
 import ChatBox from './ChatBox';
 import HistoryBox from './HistoryBox';
 import InfoBox from './InfoBox';
+import PlayerBox from './PlayerBox';
 import './styles.scss';
-import UserInfo from './UserInfo';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-}));
 
 const Game = () => {
-    const classes = useStyles();
     const { authData, resetAuthData } = useAuthContext();
-    const { roomId } = useParams();
+
     const history = useHistory();
+    const query = useQuery();
+    const roomId = query.get('roomId');
+    const password = query.get('password');
 
     const [isHost, setIsHost] = useState(false);
     const [isViewer, setIsViewer] = useState(false);
-    const [chessman, setChessman] = useState('O');
+    const [isWinner, setIsWinner] = useState(null);
+
     const [guestname, setGuestname] = useState(null);
     const [guestAvatar, setGuestAvatar] = useState('');
+
     const [hostname, setHostname] = useState(null);
     const [hostAvatar, setHostAvatar] = useState('');
+
     const [boardId, setBoardId] = useState(null);
     const [hostReady, setHostReady] = useState(false);
     const [guestReady, setGuestReady] = useState(false);
+    const [hostCups, setHostCups] = useState(null);
+    const [guestCups, setGuestCups] = useState(null);
+    const [time, setTime] = useState(null);
+    const [viewers, setViewers] = useState([]);
+
+    const [listHistoryItem, setListHistoryItem] = useState([]);
+
     const [squares, setSquares] = useState(Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill(null)));
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const [turn, setTurn] = useState('X');
-    const [time, setTime] = useState(null);
-    const [listHistoryItem, setListHistoryItem] = useState([]);
-    const [viewers, setViewers] = useState([]);
-    const [hostCups, setHostCups] = useState(null);
-    const [guestCups, setGuestCups] = useState(null);
-    const [isWinner, setIsWinner] = useState(null);
+    const [chessman, setChessman] = useState(null);
+
+    const [countDownKey, setCountDownKey] = useState(0);
+    const [openOnline, setOpenOnline] = useState(false);
+
     const isChecked = useRef(false);
     let countDownRef = useRef(null);
+    let configTimeRef = useRef(null);
+
+    console.log(countDownRef);
 
     useEffect(() => {
-        socket.emit('joinRoom', { roomId, cups: authData.userInfo.cups });
+        socket.emit('joinRoom', { roomId, password, cups: authData.userInfo.cups });
+
+        socket.on('joinRoomError', (type) => {
+            if (type === 'wrongRoomId') {
+                alert('Invalid Room ID');
+                history.push('/home');
+            } else {
+                // TODO: Show dialog for password
+                alert('Wrong password. Show modal to type');
+            }
+        });
 
         socket.on('getRoomInfo', (roomInfo) => {
-            const { host, guest, config } = roomInfo;
+            const { host, guest, board, config } = roomInfo;
+            configTimeRef.current = config.time;
             setHostname(host.username);
             setHostReady(host.isReady);
             setGuestname(guest.username);
             setGuestReady(guest.isReady);
-            setBoardId(roomInfo.boardId);
-            setTime(config.time);
+            setBoardId(board.boardId);
+            setTime(board.timeRemaining);
             setViewers(roomInfo.viewers);
             setHostAvatar(host.avatar);
             setGuestAvatar(guest.avatar);
             setHostCups(host.cups);
             setGuestCups(guest.cups);
+            setSquares(board.squares);
+            setListHistoryItem(board.listHistoryItem);
+            setTurn(board.turn);
 
             if (authData.userInfo.username === host.username) {
                 setChessman('X');
                 setIsHost(true);
+            } else if (authData.userInfo.username === guest.username) {
+                setChessman('O');
+            } else {
+                setIsViewer(true);
+            }
+
+            if (board.boardId) {
+                countDownRef.current.start();
+            }
+        });
+
+        socket.on('getUpdateRoomInfo', async (roomInfo) => {
+            const { host, guest, board } = roomInfo;
+
+            setHostReady(host.isReady);
+            setGuestReady(guest.isReady);
+            setBoardId(board.boardId);
+            setTime(board.timeRemaining);
+            setHostCups(host.cups);
+            setGuestCups(guest.cups);
+            setSquares(board.squares);
+            setListHistoryItem(board.listHistoryItem);
+            setTurn('X');
+            setCountDownKey((prevKey) => prevKey + 1);
+            setIsWinner(null);
+
+            if (authData.userInfo.username === host.username) {
+                setChessman('X');
+                setIsHost(true);
+            } else if (authData.userInfo.username === guest.username) {
+                setChessman('O');
+            } else {
+                setIsViewer(true);
+            }
+            if (board.boardId) {
+                countDownRef.current.start();
+            }
+            isChecked.current = false;
+
+            try {
+                const res = await axiosUser.get(`/users/${authData.userInfo.userId}`);
+                resetAuthData(res);
+            } catch (error) {
+                console.log(error);
             }
         });
 
         socket.on('newMoveChessman', (data) => {
-            console.log(data);
-            setSquares((prevSquares) => {
-                console.log('oldsquares ', prevSquares);
-                if (prevSquares[data.pos.x][data.pos.y]) return;
-                const newSquares = [...prevSquares];
-                const oneRow = [...newSquares[data.pos.x]];
-                oneRow[data.pos.y] = data.chessman;
-                newSquares[data.pos.x] = oneRow;
-                console.log('newsquares ', newSquares);
-                return newSquares;
-            });
-            console.log(data.pos);
+            setSquares(data.squares);
             isChecked.current = true;
             setLastPos(data.pos);
+            setListHistoryItem(data.listHistoryItem);
+        });
 
-            setListHistoryItem((prelistHistoryItem) => {
-                const historyItem = {
-                    username: data.sender,
-                    chessman: data.chessman,
-                    pos: data.pos,
-                };
-                return [...prelistHistoryItem, historyItem];
+        socket.on('resign', (data) => {
+            if (authData.userInfo.username === data.winner) {
+                setIsWinner(true);
+            } else {
+                setIsWinner(false);
+            }
+        });
+
+        socket.on('drawReq', () => {
+            Swal.fire({
+                icon: 'question',
+                title: 'Do you want to draw ?',
+                showConfirmButton: true,
+                showDenyButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    socket.emit('draw', { roomId });
+                } else if (result.isDenied) {
+                    socket.emit('refuseDraw', { roomId });
+                }
             });
+        });
 
-            console.log(isChecked.current);
-            console.log('start');
+        socket.on('draw', () => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Draw',
+                showConfirmButton: true,
+            }).then(() => {
+                socket.emit('getUpdateRoomInfo', roomId);
+            });
+        });
+
+        socket.on('refuseDraw', () => {
+            console.log('refuse draw');
         });
 
         return () => {
-            socket.emit('leaveRoom', { roomId, isHost, isViewer });
+            socket.removeAllListeners();
         };
+
+        // return () => {
+        //     socket.emit('leaveRoom', roomId);
+        // };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         const createBoard = async () => {
             try {
-                console.log('jdkjshdksdjh');
                 const res = await axiosUser.post('/boards', { guestname });
-
-                setBoardId(res.data.boardId);
                 socket.emit('updateBoard', { roomId, boardId: res.data.boardId });
             } catch (error) {
                 console.log(error);
             }
         };
+
         if (hostReady && guestReady && isHost) {
             createBoard();
-        }
-        if (hostReady && guestReady) {
-            countDownRef.current.start();
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hostReady, guestReady]);
 
     useEffect(() => {
-        console.log('Check win');
-
-        console.log(isChecked.current);
         if (isChecked.current) {
-            console.log(isChecked.current);
-            console.log('checkwin ', squares, lastPos, turn);
             if (calculateWinner(squares, lastPos, turn)) {
                 if (turn === chessman) {
                     setIsWinner(true);
                 } else {
                     setIsWinner(false);
                 }
-                alert(`${turn} won`);
+                countDownRef.current.pause();
+                return;
             }
             setTurn((prevTurn) => {
-                console.log('prev turn ', prevTurn);
                 return prevTurn === 'X' ? 'O' : 'X';
             });
+
+            if (time !== configTimeRef.current) {
+                setTime(configTimeRef.current);
+            }
             countDownRef.current.start();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lastPos]);
 
     useEffect(() => {
-        const postWinner = async (boardId, cups) => {
-            try {
-                const res = await axiosUser.patch(`/boards/${boardId}`, { cups });
-                return res;
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        const patchUserInfo = async (cups, wins, total) => {
-            try {
-                await axiosUser.patch(`/users/patch`, { cups, wins, total });
-                const res = await axiosUser.get(`/users/${authData.userInfo.userId}`);
-                resetAuthData(res);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
         if (isWinner !== null) {
             let rate;
             if (
@@ -187,33 +244,51 @@ const Game = () => {
             } else {
                 rate = RATE_HIGH;
             }
-            console.log(rate);
-            const cups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
-            console.log(cups);
+            const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+
             if (isWinner === true) {
-                postWinner(boardId, cups);
-                patchUserInfo(
-                    authData.userInfo.cups + cups,
-                    authData.userInfo.wins + 1,
-                    authData.userInfo.total + 1,
-                );
-                socket.emit('updateRoom', {
-                    newCups: cups,
-                    isHost,
-                    roomId,
+                Swal.fire({
+                    icon: 'success',
+                    title: 'You won',
+                    text: `+${newCups} cup`,
+                    showConfirmButton: true,
+                }).then(() => {
+                    socket.emit('getUpdateRoomInfo', roomId);
                 });
-            } else if (isWinner === false) {
-                patchUserInfo(
-                    authData.userInfo.cups - cups,
-                    authData.userInfo.wins,
-                    authData.userInfo.total + 1,
-                );
+            } else if (chessman && !isWinner) {
+                socket.emit('finishGame', {
+                    newCups,
+                    roomId,
+                    loser: authData.userInfo.username,
+                });
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'You lose',
+                    text: `-${newCups} cup`,
+                    showConfirmButton: true,
+                }).then(() => {
+                    socket.emit('getUpdateRoomInfo', roomId);
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: `${turn} won`,
+                    text: `+${newCups} cup`,
+                    showConfirmButton: true,
+                }).then(() => {
+                    socket.emit('getUpdateRoomInfo', roomId);
+                });
             }
-            countDownRef.current.stop();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isWinner]);
 
     const handleToggleReady = () => {
+        if (isViewer) {
+            return;
+        }
+
         if (isHost) {
             setHostReady((prevHostReady) => {
                 socket.emit('updateReady', { roomId, isHost, isReady: !prevHostReady });
@@ -228,39 +303,74 @@ const Game = () => {
     };
 
     const handleLeaveRoom = () => {
-        // TODO: Call api update board status
-        socket.emit('leaveRoom', { roomId, isHost, isViewer });
-        history.push('/home');
+        if (boardId && !isViewer) {
+            let rate;
+            if ((isHost && hostCups > guestCups) || (!isHost && hostCups < guestCups)) {
+                rate = RATE_LOW;
+            } else {
+                rate = RATE_HIGH;
+            }
+            const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Do you want to leave this room?',
+                text: `If you leave, you will lose ${newCups} cup`,
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    socket.emit('leaveRoomAndLose', {
+                        newCups,
+                        roomId,
+                    });
+                    try {
+                        const res = await axiosUser.get(`/users/${authData.userInfo.userId}`);
+                        resetAuthData(res);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                    history.push('/home');
+                }
+            });
+        } else {
+            socket.emit('leaveRoom', roomId);
+            history.push('/home');
+        }
     };
 
-    const onHandleClickSquare = (pos) => {
-        console.log(turn, chessman);
+    const handleClickSquare = (pos) => {
+        if (isViewer) return;
+
         if (boardId && turn === chessman) {
-            console.log('move chessman');
-            let username = isHost ? hostname : guestname;
-            socket.emit('moveChessman', { roomId, boardId, chessman, pos });
+            if (squares[pos.x][pos.y]) return;
 
-            setSquares((prevSquares) => {
-                if (prevSquares[pos.x][pos.y]) return;
-                const newSquares = [...prevSquares];
-                const oneRow = [...newSquares[pos.x]];
-                oneRow[pos.y] = chessman;
-                newSquares[pos.x] = oneRow;
-                console.log('newsquares ', newSquares);
-                return newSquares;
-            });
+            const newSquares = [...squares];
+            const oneRow = [...newSquares[pos.x]];
+            oneRow[pos.y] = chessman;
+            newSquares[pos.x] = oneRow;
+            setSquares(newSquares);
+
+            isChecked.current = true;
             setLastPos(pos);
+            const newListHistoryItem = [
+                ...listHistoryItem,
+                {
+                    username: isHost ? hostname : guestname,
+                    chessman,
+                    pos,
+                },
+            ];
+            setListHistoryItem(newListHistoryItem);
 
-            //save item history move
-
-            const historyItem = {
-                username,
+            socket.emit('moveChessman', {
+                roomId,
+                boardId,
                 chessman,
                 pos,
-            };
-            const newListHistoryItem = [...listHistoryItem, historyItem];
-            setListHistoryItem(newListHistoryItem);
-            isChecked.current = true;
+                squares: newSquares,
+                listHistoryItem: newListHistoryItem,
+            });
         }
     };
 
@@ -380,25 +490,57 @@ const Game = () => {
     };
 
     const handleTimeout = () => {
-        if (turn !== chessman) {
+        if (chessman && turn !== chessman) {
             setIsWinner(true);
         } else {
             setIsWinner(false);
         }
-        alert(`${turn === 'X' ? 'O' : 'X'} won`);
     };
 
-    const renderer = ({ seconds }) => {
-        return <span>{seconds}</span>;
+    const handleResign = () => {
+        if (boardId && !isViewer) {
+            Swal.fire({
+                icon: 'question',
+                title: 'Do you want to resign ?',
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    socket.emit('resign', { roomId });
+                }
+            });
+        }
     };
+
+    const handleDraw = () => {
+        if (boardId && !isViewer) {
+            Swal.fire({
+                icon: 'question',
+                title: 'Do you want to draw ?',
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    socket.emit('drawReq', { roomId });
+                }
+            });
+        }
+    };
+
+    const handleInvite = (username) => {
+        socket.emit('invite', { roomId, reciever: username });
+    };
+    console.log(viewers);
 
     return (
         <Container>
-            <Grid container spacing={3}>
-                <Grid item xs={8}>
-                    <Paper className={classes.paper}>
-                        <UserInfo
+            <Grid container spacing={3} className="grid-row">
+                <Grid item xs={7}>
+                    <div className="box row-1">
+                        <PlayerBox
                             boardId={boardId}
+                            isHost={isHost}
+                            isViewer={isViewer}
                             hostname={hostname}
                             hostReady={hostReady}
                             guestname={guestname}
@@ -407,52 +549,57 @@ const Game = () => {
                             guestAvatar={guestAvatar}
                             hostCups={hostCups}
                             guestCups={guestCups}
-                        ></UserInfo>
-                        <Typography component="h5" variant="h5">
-                            Time:{' '}
-                            <Countdown
-                                date={Date.now() + time * 1000}
-                                ref={countDownRef}
-                                autoStart={false}
-                                renderer={renderer}
-                                onComplete={handleTimeout}
-                            />
-                        </Typography>
-                    </Paper>
-                    <div className="ready">
-                        <Button variant="contained" color="primary" onClick={handleToggleReady}>
-                            Ready
-                        </Button>
+                            time={time}
+                            countDownRef={countDownRef}
+                            countDownKey={countDownKey}
+                            handleTimeout={handleTimeout}
+                            handleToggleReady={handleToggleReady}
+                            handleLeaveRoom={handleLeaveRoom}
+                            handleResign={handleResign}
+                            handleDraw={handleDraw}
+                            handleInvite={handleInvite}
+                            openOnline={openOnline}
+                            setOpenOnline={setOpenOnline}
+                        />
                     </div>
-                    <div className="leave">
-                        <Button variant="contained" color="primary" onClick={handleLeaveRoom}>
-                            Leave Room
-                        </Button>
-                    </div>
-                    <div className="gameplay"></div>
                 </Grid>
 
-                <Grid item xs={4}>
-                    <Paper className={classes.paper}>
-                        <InfoBox viewers={viewers} boardId={boardId} />
-                    </Paper>
+                <Grid item xs={5}>
+                    <div className="box row-1">
+                        <InfoBox
+                            viewers={viewers}
+                            boardId={boardId}
+                            configTimeRef={configTimeRef}
+                            roomId={roomId}
+                            password={password}
+                            handleLeaveRoom={handleLeaveRoom}
+                            handleInvite={handleInvite}
+                            openOnline={openOnline}
+                            setOpenOnline={setOpenOnline}
+                        />
+                    </div>
                 </Grid>
             </Grid>
+
             <Grid container spacing={3}>
-                <Grid item xs={8}>
-                    <Paper className={classes.paper}>
-                        {' '}
-                        <Board squares={squares} onHandleClickSquare={onHandleClickSquare} />
-                    </Paper>
+                <Grid item xs={7}>
+                    <div className="box">
+                        <Board squares={squares} onHandleClickSquare={handleClickSquare} />
+                    </div>
                 </Grid>
 
-                <Grid item xs={4}>
-                    <Paper className={classes.paper}>
-                        <HistoryBox listHistoryItem={listHistoryItem}></HistoryBox>
-                    </Paper>
-                    <Paper className={classes.paper}>
+                <Grid item xs={5}>
+                    <div className="box row-2">
+                        <HistoryBox
+                            hostname={hostname}
+                            guestname={guestname}
+                            listHistoryItem={listHistoryItem}
+                        ></HistoryBox>
+                    </div>
+
+                    <div className="box row-2 mt-3">
                         <ChatBox boardId={boardId} roomId={roomId} />
-                    </Paper>
+                    </div>
                 </Grid>
             </Grid>
         </Container>

@@ -24,8 +24,8 @@ const UserRoutes = () => {
             <Route path={`${url}/reset-password/:hashToken`} component={ResetPassword} />
 
             <PrivateRoute path={`${url}/home`} component={Home} />
-            <PrivateRoute path={`${url}/room`} exact component={RoomList} />
-            <PrivateRoute path={`${url}/room/:roomId`} component={Game} />
+            <PrivateRoute path={`${url}/room-list`} component={RoomList} />
+            <PrivateRoute path={`${url}/room`} component={Game} />
         </Switch>
     );
 };

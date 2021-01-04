@@ -1,6 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
-import { axiosUser } from '../../../../api/axiosUser';
-import socket from '../../../../commons/socket';
 import { BOARD_SIZE } from '../../../../config/board.config';
 import Square from './Square';
 import './styles.scss';
@@ -21,7 +18,7 @@ const Board = (props) => {
 
     let board = Array(BOARD_SIZE).fill(null);
     return (
-        <div>
+        <div className="board">
             {board.map((item, i) => {
                 let row = Array(BOARD_SIZE).fill(null);
                 return (

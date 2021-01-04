@@ -1,21 +1,11 @@
-import { Button, makeStyles, TextField } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import { SendOutlined } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from '../../../../commons/socket';
 import { useAuthContext } from '../../../../context/AuthContext';
 import MessagesHistory from './MessagesHistory';
-
-const useStyles = makeStyles((theme) => ({
-    rootChatBox: {
-        maxWidth: '350px',
-        height: '500px',
-    },
-    sendMsgContainer: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-}));
+import './styles.scss';
 
 // const fakeMessages = [
 //     {
@@ -46,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
 // ];
 
 const ChatBox = ({ boardId, roomId }) => {
-    const classes = useStyles();
     const [listMessages, setListMessages] = useState([]);
     const { register, handleSubmit, reset } = useForm();
     const { authData } = useAuthContext();
@@ -65,45 +54,39 @@ const ChatBox = ({ boardId, roomId }) => {
     }, []);
 
     const onSendMyMessage = (data) => {
-        if (boardId) {
-            const { inputMessage } = data;
-            console.log(inputMessage);
-            const message = {
-                sender: authData.userInfo.username,
-                content: inputMessage,
-                isMine: true,
-            };
-            setListMessages(listMessages.concat(message));
-            socket.emit('sendMessage', { boardId, content: message.content, roomId });
-            reset({});
-        }
+        const { inputMessage } = data;
+        console.log(inputMessage);
+        const message = {
+            sender: authData.userInfo.username,
+            content: inputMessage,
+            isMine: true,
+        };
+        setListMessages(listMessages.concat(message));
+        socket.emit('sendMessage', { boardId, content: message.content, roomId });
+        reset({});
     };
 
     return (
-        <div className={classes.rootChatBox}>
+        <div className="chat-box">
             <MessagesHistory messages={listMessages} />
-            <form
-                className={classes.sendMsgContainer}
-                noValidate
-                onSubmit={handleSubmit(onSendMyMessage)}
-            >
+            <form className="chat-form" noValidate onSubmit={handleSubmit(onSendMyMessage)}>
                 <TextField
+                    fullWidth
                     name="inputMessage"
                     inputRef={register}
-                    variant={'outlined'}
-                    size={'small'}
-                    label={'Message'}
-                    autoFocus
-                    color={'secondary'}
+                    variant="outlined"
+                    size="small"
+                    label="Message"
+                    color="secondary"
                     style={{
                         marginRight: '5px',
                     }}
+                    autoComplete="off"
                 />
                 <Button
                     type="submit"
                     color="secondary"
-                    variant={'outlined'}
-                    size={'small'}
+                    variant="outlined"
                     endIcon={<SendOutlined />}
                 >
                     Send
