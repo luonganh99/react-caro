@@ -42,6 +42,7 @@ const Game = () => {
     const [viewers, setViewers] = useState([]);
 
     const [listHistoryItem, setListHistoryItem] = useState([]);
+    const [listMessages, setListMessages] = useState([]);
 
     const [squares, setSquares] = useState(Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill(null)));
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
@@ -54,8 +55,6 @@ const Game = () => {
     const isChecked = useRef(false);
     let countDownRef = useRef(null);
     let configTimeRef = useRef(null);
-
-    console.log(countDownRef);
 
     useEffect(() => {
         socket.emit('joinRoom', { roomId, password, cups: authData.userInfo.cups });
@@ -594,11 +593,17 @@ const Game = () => {
                             hostname={hostname}
                             guestname={guestname}
                             listHistoryItem={listHistoryItem}
+                            handleHistoryItemClick={() => {}}
                         ></HistoryBox>
                     </div>
 
                     <div className="box row-2 mt-3">
-                        <ChatBox boardId={boardId} roomId={roomId} />
+                        <ChatBox
+                            boardId={boardId}
+                            roomId={roomId}
+                            listMessages={listMessages}
+                            setListMessages={setListMessages}
+                        />
                     </div>
                 </Grid>
             </Grid>

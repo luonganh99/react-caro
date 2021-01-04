@@ -2,9 +2,7 @@ import { BOARD_SIZE } from '../../../../config/board.config';
 import Square from './Square';
 import './styles.scss';
 
-const Board = (props) => {
-    const { squares, onHandleClickSquare } = props;
-
+const Board = ({ squares, onHandleClickSquare }) => {
     const renderSquare = (pos, isHighlight) => {
         return (
             <Square

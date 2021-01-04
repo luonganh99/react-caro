@@ -1,4 +1,4 @@
-import { Button, IconButton, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import {
     AccessTimeRounded,
     FlagRounded,
@@ -21,7 +21,6 @@ const GameInfo = ({
     countDownKey,
     handleTimeout,
     handleToggleReady,
-    handleLeaveRoom,
     handleResign,
     handleDraw,
 }) => {
@@ -34,13 +33,9 @@ const GameInfo = ({
         );
     };
 
-    console.log(isViewer);
-    console.log(isViewer);
-
     return (
         <div className="game-info">
             <div className={`game-playing ${boardId ? 'display' : 'hide'}`}>
-                {/* <div className={`game-playing ${boardId ? 'hide' : 'display'}`}> */}
                 <Countdown
                     date={Date.now() + time * 1000}
                     ref={countDownRef}
@@ -74,7 +69,6 @@ const GameInfo = ({
                 </div>
             </div>
             <div className={`game-waiting ${boardId ? 'hide' : 'display'}`}>
-                {/* <div className={`game-waiting ${boardId ? 'display' : 'hide'}`}> */}
                 <Typography variant="h5" className="vs">
                     VS
                 </Typography>

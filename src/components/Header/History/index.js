@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import './styles.scss';
 import { useHistory } from 'react-router-dom';
 
-const History = ({ userInfo }) => {
+const History = ({ userInfo, onClose }) => {
     const [boardList, setBoardList] = useState([]);
     const history = useHistory();
 
@@ -26,6 +26,7 @@ const History = ({ userInfo }) => {
     }, []);
 
     const handleReviewClick = (boardId) => {
+        onClose();
         history.push(`/board/${boardId}`);
     };
 

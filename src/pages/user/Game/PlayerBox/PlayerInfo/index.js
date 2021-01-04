@@ -4,7 +4,6 @@ import React from 'react';
 import './styles.scss';
 
 const PlayerInfo = ({ isHost = false, username, avatar, cups, ready }) => {
-    console.log(avatar);
     return (
         <div className={`player-info ${isHost ? ready && 'ready-left' : ready && 'ready-right'}`}>
             <Typography variant="body1" className="host-guest">

@@ -3,6 +3,7 @@ import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../components/PrivateRoute';
 import ActivateAccount from './ActivateAccount';
 import Game from './Game';
+import ReviewGame from './ReviewGame';
 import Home from './Home';
 import Login from './Login';
 import ForgotPassword from './Login/ForgotPassword';
@@ -26,6 +27,7 @@ const UserRoutes = () => {
             <PrivateRoute path={`${url}/home`} component={Home} />
             <PrivateRoute path={`${url}/room-list`} component={RoomList} />
             <PrivateRoute path={`${url}/room`} component={Game} />
+            <PrivateRoute path={`${url}/board/:boardId`} component={ReviewGame} />
         </Switch>
     );
 };

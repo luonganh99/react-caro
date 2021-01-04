@@ -80,7 +80,7 @@ const Profile = ({ userInfo, open, onClose }) => {
                         </div>
                     </div>
 
-                    <History userInfo={userInfo} />
+                    <History userInfo={userInfo} onClose={onClose} />
                 </DialogContent>
             }
         </Dialog>

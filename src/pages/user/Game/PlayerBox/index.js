@@ -23,9 +23,6 @@ const PlayerBox = ({
     handleLeaveRoom,
     handleResign,
     handleDraw,
-    handleInvite,
-    openOnline,
-    setOpenOnline,
 }) => {
     return (
         <div className="player-box">
@@ -59,49 +56,6 @@ const PlayerBox = ({
                 cups={guestCups}
                 ready={guestReady}
             />
-
-            {/* <Typography component="h5" variant="h5">
-                Time:{' '}
-                <Countdown
-                    date={Date.now() + time * 1000}
-                    ref={countDownRef}
-                    key={countDownKey}
-                    overtime={false}
-                    autoStart={false}
-                    controlled={false}
-                    renderer={renderer}
-                    onComplete={handleTimeout}
-                />
-            </Typography>
-
-            <div className="ready">
-                <Button variant="contained" color="primary" onClick={handleToggleReady}>
-                    Ready
-                </Button>
-            </div>
-            <div className="leave">
-                <Button variant="contained" color="primary" onClick={handleLeaveRoom}>
-                    Leave Room
-                </Button>
-            </div>
-            <Button onClick={handleResign}>Resign</Button>
-
-            <Button onClick={handleDraw}>Draw</Button>
-
-            <Button onClick={() => setOpenOnline(true)}>Invite</Button>
-            <OnlineDialog
-                handleCloseOnline={() => setOpenOnline(false)}
-                handleInvite={handleInvite}
-                openOnline={openOnline}
-                isInvite={true}
-            />
-
-            <Typography variant="body1" className="guest">
-                Guestname: <span> {guestname}</span>
-                Cups: <span>{guestCups}</span>
-                {guestReady && 'Guest is ready'}
-                <Avatar src={guestAvatar} />
-            </Typography> */}
         </div>
     );
 };

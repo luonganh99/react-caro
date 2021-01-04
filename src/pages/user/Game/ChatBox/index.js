@@ -35,8 +35,7 @@ import './styles.scss';
 //     },
 // ];
 
-const ChatBox = ({ boardId, roomId }) => {
-    const [listMessages, setListMessages] = useState([]);
+const ChatBox = ({ boardId, roomId, listMessages, setListMessages }) => {
     const { register, handleSubmit, reset } = useForm();
     const { authData } = useAuthContext();
 
@@ -69,29 +68,31 @@ const ChatBox = ({ boardId, roomId }) => {
     return (
         <div className="chat-box">
             <MessagesHistory messages={listMessages} />
-            <form className="chat-form" noValidate onSubmit={handleSubmit(onSendMyMessage)}>
-                <TextField
-                    fullWidth
-                    name="inputMessage"
-                    inputRef={register}
-                    variant="outlined"
-                    size="small"
-                    label="Message"
-                    color="secondary"
-                    style={{
-                        marginRight: '5px',
-                    }}
-                    autoComplete="off"
-                />
-                <Button
-                    type="submit"
-                    color="secondary"
-                    variant="outlined"
-                    endIcon={<SendOutlined />}
-                >
-                    Send
-                </Button>
-            </form>
+            {roomId && (
+                <form className="chat-form" noValidate onSubmit={handleSubmit(onSendMyMessage)}>
+                    <TextField
+                        fullWidth
+                        name="inputMessage"
+                        inputRef={register}
+                        variant="outlined"
+                        size="small"
+                        label="Message"
+                        color="secondary"
+                        style={{
+                            marginRight: '5px',
+                        }}
+                        autoComplete="off"
+                    />
+                    <Button
+                        type="submit"
+                        color="secondary"
+                        variant="outlined"
+                        endIcon={<SendOutlined />}
+                    >
+                        Send
+                    </Button>
+                </form>
+            )}
         </div>
     );
 };

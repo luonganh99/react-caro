@@ -19,8 +19,6 @@ axiosUser.interceptors.request.use(
 
 axiosUser.interceptors.response.use(
     (response) => {
-        console.log(response);
-
         if (response && response.data) {
             return response.data;
         }
