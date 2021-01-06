@@ -32,21 +32,49 @@
     }
 }
 
-// .createGameBtn {
-//     margin-top: 40px !important;
-// }
+.loading {
+    font-size: 70px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    text-align: center;
+    span {
+        display: inline-block;
+        margin: 0 -0.05em;
+    }
+}
 
-// .joinGame {
-//     margin-top: 40px;
+.loading07 {
+    span {
+        position: relative;
+        color: rgba(rgb(37, 0, 71), 0.2);
+        &::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: attr(data-text);
+            color: rgb(54, 111, 196);
+            opacity: 0;
+            transform: scale(1.5);
+            animation: loading07 3s infinite;
+        }
+        @for $i from 1 through 9 {
+            &:nth-child(#{$i + 1})::after {
+                animation-delay: #{$i * 0.1}s;
+            }
+        }
+    }
+}
 
-//     .joinGameBtn {
-//         margin-left: 20px;
-//     }
-// }
-
-// .link {
-//     margin-top: 40px;
-//     width: 20%;
-//     display: flex;
-//     justify-content: space-between;
-// }
+@keyframes loading07 {
+    0%,
+    75%,
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+    25%,
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

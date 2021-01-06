@@ -2,7 +2,7 @@ import { BOARD_SIZE } from '../../../../config/board.config';
 import Square from './Square';
 import './styles.scss';
 
-const Board = ({ squares, onHandleClickSquare }) => {
+const Board = ({ squares, onHandleClickSquare, selectedPosition }) => {
     const renderSquare = (pos, isHighlight) => {
         return (
             <Square
@@ -23,7 +23,11 @@ const Board = ({ squares, onHandleClickSquare }) => {
                     <div key={i} className="board-row">
                         {row.map((item, j) => {
                             let pos = { x: i, y: j };
-                            return renderSquare(pos, false);
+                            let isHighlight = false;
+                            if (pos.x === selectedPosition.x && pos.y === selectedPosition.y) {
+                                isHighlight = true;
+                            }
+                            return renderSquare(pos, isHighlight);
                         })}
                     </div>
                 );

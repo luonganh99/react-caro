@@ -1,9 +1,15 @@
 import React from 'react';
+import './styles.scss';
 
-export default function Square({isHighlight, onHandleClickSquare, value }) {
+const Square = ({ isHighlight, onHandleClickSquare, value }) => {
     return (
-        <button className={`square ${isHighlight && 'highlight'}`} onClick={() => onHandleClickSquare()}>
+        <button
+            className={`square ${isHighlight && 'highlight'}`}
+            onClick={() => onHandleClickSquare()}
+        >
             {value}
         </button>
-    );  
-}
+    );
+};
+
+export default Square;

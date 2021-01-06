@@ -56,8 +56,6 @@ const Game = () => {
     let countDownRef = useRef(null);
     let configTimeRef = useRef(null);
 
-    console.log('guest ', authData);
-
     useEffect(() => {
         socket.emit('joinRoom', { roomId, password, cups: authData.userInfo.cups });
 
@@ -535,7 +533,6 @@ const Game = () => {
     const handleInvite = (username) => {
         socket.emit('invite', { roomId, reciever: username });
     };
-    console.log(viewers);
 
     return (
         <Container>
@@ -589,7 +586,11 @@ const Game = () => {
             <Grid container spacing={3}>
                 <Grid item xs={7}>
                     <div className="box">
-                        <Board squares={squares} onHandleClickSquare={handleClickSquare} />
+                        <Board
+                            squares={squares}
+                            onHandleClickSquare={handleClickSquare}
+                            selectedPosition={lastPos}
+                        />
                     </div>
                 </Grid>
 
@@ -600,7 +601,8 @@ const Game = () => {
                             guestname={guestname}
                             listHistoryItem={listHistoryItem}
                             handleHistoryItemClick={() => {}}
-                        ></HistoryBox>
+                            selectedPosition={lastPos}
+                        />
                     </div>
 
                     <div className="box row-2 mt-3">

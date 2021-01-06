@@ -235,7 +235,11 @@ const ReviewGame = () => {
             <Grid container spacing={3}>
                 <Grid item xs={7}>
                     <div className="box">
-                        <Board squares={squares} onHandleClickSquare={() => {}} />
+                        <Board
+                            squares={squares}
+                            onHandleClickSquare={() => {}}
+                            selectedPosition={selectedPosition}
+                        />
                     </div>
                 </Grid>
 
@@ -246,6 +250,7 @@ const ReviewGame = () => {
                             guestname={guestInfo.username}
                             listHistoryItem={historyList}
                             handleHistoryItemClick={handleHistoryItemClick}
+                            selectedPosition={selectedPosition}
                         />
                     </div>
 

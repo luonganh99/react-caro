@@ -1,15 +1,27 @@
-import { Button, Container, Typography } from '@material-ui/core';
+import {
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    Slide,
+    Typography,
+} from '@material-ui/core';
 import { EqualizerRounded, VideogameAssetRounded, ViewListRounded } from '@material-ui/icons';
-import React, { useEffect } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import socket from '../../../commons/socket';
 import { useAuthContext } from '../../../context/AuthContext';
 import './styles.scss';
 
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const Home = () => {
     const history = useHistory();
     const { authData } = useAuthContext();
-    // const [boardId, setBoardId] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         socket.on('joinRoom', ({ roomId, password }) => {
@@ -24,6 +36,12 @@ const Home = () => {
 
     const handlePlayNowClick = () => {
         socket.emit('playNow', { cups: authData.userInfo.cups });
+        setLoading(true);
+    };
+
+    const handleClosePlayNow = () => {
+        socket.emit('stopPlayNow');
+        setLoading(false);
     };
 
     return (
@@ -69,53 +87,41 @@ const Home = () => {
                 </Button>
             </div>
 
-            {/* <Button
-                className="createGameBtn"
-                variant="contained"
-                color="primary"
-                onClick={handleCreate}
+            <Dialog
+                open={loading}
+                onClose={handleClosePlayNow}
+                fullWidth={true}
+                maxWidth="sm"
+                TransitionComponent={Transition}
+                keepMounted
             >
-                Create new game
-            </Button>
-            <div className="joinGame">
-                <TextField
-                    variant="outlined"
-                    size="small"
-                    label="Room ID"
-                    name="boardId"
-                    value={boardId}
-                    onChange={(e) => setBoardId(e.target.value)}
-                />
-                <Button
-                    className="joinGameBtn"
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleJoinGame}
+                <DialogContent
+                    style={{
+                        height: 180,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
                 >
-                    Join
-                </Button>
-            </div>
-            <div className="link">
-                <Button
-                    to="/online-user"
-                    className="onlineList"
-                    component={RouterLink}
-                    variant="outlined"
-                    color="primary"
-                >
-                    {' '}
-                    Online List{' '}
-                </Button>
-                <Button
-                    to="/result"
-                    className="resultList"
-                    component={RouterLink}
-                    variant="outlined"
-                    color="primary"
-                >
-                    Result
-                </Button>
-            </div> */}
+                    <div className="loading loading07">
+                        <span data-text="F">F</span>
+                        <span data-text="I">I</span>
+                        <span data-text="N">N</span>
+                        <span data-text="D">D</span>
+                        <span data-text="I">I</span>
+                        <span data-text="N">N</span>
+                        <span data-text="G">G</span>
+                        <span data-text=".">.</span>
+                        <span data-text=".">.</span>
+                        <span data-text=".">.</span>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClosePlayNow} color="primary">
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };

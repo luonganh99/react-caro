@@ -122,6 +122,7 @@ const Login = () => {
 
     const onGoogleSuccess = async (googleRes) => {
         try {
+            setLoading(true);
             const apiRes = await axiosUser.get('/auth/google', {
                 headers: {
                     access_token: googleRes.accessToken,
@@ -133,6 +134,8 @@ const Login = () => {
                 history.push('/home');
             }
         } catch (error) {
+            setLoading(false);
+
             console.log(error);
         }
     };
@@ -143,6 +146,7 @@ const Login = () => {
 
     const onFacebookSuccess = async (facebookRes) => {
         try {
+            setLoading(true);
             console.log(facebookRes);
             const apiRes = await axiosUser.get('/auth/facebook', {
                 headers: {
@@ -155,6 +159,8 @@ const Login = () => {
                 history.push('/home');
             }
         } catch (error) {
+            setLoading(false);
+
             console.log(error);
         }
     };
