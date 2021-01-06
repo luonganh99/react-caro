@@ -7,10 +7,12 @@ import {
     DialogTitle,
     InputLabel,
     MenuItem,
+    Paper,
     Select,
     TextField,
     Typography,
 } from '@material-ui/core';
+import { AddBoxRounded, MeetingRoomRounded } from '@material-ui/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Controller, useForm } from 'react-hook-form';
@@ -193,26 +195,46 @@ const RoomList = () => {
 
     return (
         <div className="room-list">
-            <Typography variant="h2">Room List</Typography>
-            <div className="btn-group">
-                <Button onClick={handleOpenCreateForm} variant="contained" color="primary">
-                    Create
-                </Button>
-                <Button onClick={handleOpenJoinForm} variant="contained" color="primary">
-                    Join
-                </Button>
-            </div>
+            <Paper className="container">
+                <div className="header">
+                    <Typography color="primary" variant="h2" className="title">
+                        Room
+                    </Typography>
+                    <div className="btn-group">
+                        <Button
+                            onClick={handleOpenCreateForm}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<AddBoxRounded />}
+                            size="large"
+                            className="create-btn"
+                        >
+                            Create
+                        </Button>
+                        <Button
+                            onClick={handleOpenJoinForm}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<MeetingRoomRounded />}
+                            size="large"
+                            className="join-btn"
+                        >
+                            Join
+                        </Button>
+                    </div>
+                </div>
 
-            <div className="content">
-                <DataTable
-                    columns={columns}
-                    data={roomList}
-                    progressPending={loading}
-                    onRowClicked={handleRowClick}
-                    pointerOnHover
-                    highlightOnHover
-                />
-            </div>
+                <div className="content">
+                    <DataTable
+                        columns={columns}
+                        data={roomList}
+                        progressPending={loading}
+                        onRowClicked={handleRowClick}
+                        pointerOnHover
+                        highlightOnHover
+                    />
+                </div>
+            </Paper>
 
             <Dialog
                 fullWidth={true}
@@ -220,19 +242,21 @@ const RoomList = () => {
                 onClose={handleCloseCreateForm}
                 aria-labelledby="create-game-form"
             >
-                <DialogTitle id="create-game-form">Create game</DialogTitle>
+                <DialogTitle id="create-game-form">Create Game</DialogTitle>
                 <DialogContent>
                     <InputLabel>Password (Optional)</InputLabel>
                     <TextField
-                        margin="dense"
+                        margin="normal"
                         name="password"
                         inputRef={register}
                         autoComplete="off"
+                        fullWidth
                     />
                     <InputLabel>Time</InputLabel>
                     <Controller
                         control={control}
                         name="time"
+                        fullWidth
                         render={({ onChange, onBlur, value }) => (
                             <Select
                                 onChange={onChange}
@@ -266,26 +290,28 @@ const RoomList = () => {
                 onClose={handleCloseJoinForm}
                 aria-labelledby="join-game-form"
             >
-                <DialogTitle id="join-game-form">Join game</DialogTitle>
+                <DialogTitle id="join-game-form">Join Game</DialogTitle>
                 <DialogContent>
                     <InputLabel>RoomID</InputLabel>
                     <TextField
-                        margin="dense"
+                        margin="normal"
                         name="roomId"
                         inputRef={register}
                         autoComplete="off"
                         error={!!errors?.roomId}
                         helperText={errors?.roomId?.message}
                         required={true}
+                        fullWidth
                     />
                     <InputLabel>Password</InputLabel>
                     <TextField
-                        margin="dense"
+                        margin="normal"
                         name="password"
                         inputRef={register}
                         autoComplete="off"
                         error={!!errors?.password}
                         helperText={errors?.password?.message}
+                        fullWidth
                     />
                 </DialogContent>
                 <DialogActions>
@@ -308,12 +334,13 @@ const RoomList = () => {
                 <DialogContent>
                     <InputLabel>Password</InputLabel>
                     <TextField
-                        margin="dense"
+                        margin="normal"
                         name="password"
                         inputRef={register}
                         autoComplete="off"
                         error={!!errors?.password}
                         helperText={errors?.password?.message}
+                        fullWidth
                     />
                 </DialogContent>
                 <DialogActions>

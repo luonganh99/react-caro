@@ -10,6 +10,7 @@ import ForgotPassword from './Login/ForgotPassword';
 import ResetPassword from './ResetPassword';
 import RoomList from './RoomList';
 import SignUp from './SignUp';
+import RankList from './RankList';
 
 const UserRoutes = () => {
     const match = useRouteMatch();
@@ -27,6 +28,7 @@ const UserRoutes = () => {
             <PrivateRoute path={`${url}/home`} component={Home} />
             <PrivateRoute path={`${url}/room-list`} component={RoomList} />
             <PrivateRoute path={`${url}/room`} component={Game} />
+            <PrivateRoute path={`${url}/rank`} component={RankList} />
             <PrivateRoute path={`${url}/board/:boardId`} component={ReviewGame} />
         </Switch>
     );

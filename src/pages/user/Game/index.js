@@ -56,6 +56,8 @@ const Game = () => {
     let countDownRef = useRef(null);
     let configTimeRef = useRef(null);
 
+    console.log('guest ', authData);
+
     useEffect(() => {
         socket.emit('joinRoom', { roomId, password, cups: authData.userInfo.cups });
 
@@ -234,18 +236,15 @@ const Game = () => {
 
     useEffect(() => {
         if (isWinner !== null) {
-            let rate;
-            if (
-                (isHost && isWinner && hostCups > guestCups) ||
-                (!isHost && isWinner && hostCups < guestCups)
-            ) {
-                rate = RATE_LOW;
-            } else {
-                rate = RATE_HIGH;
-            }
-            const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
-
             if (isWinner === true) {
+                let rate;
+                if ((isHost && hostCups > guestCups) || (!isHost && hostCups < guestCups)) {
+                    rate = RATE_LOW;
+                } else {
+                    rate = RATE_HIGH;
+                }
+                const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+
                 Swal.fire({
                     icon: 'success',
                     title: 'You won',
@@ -255,6 +254,14 @@ const Game = () => {
                     socket.emit('getUpdateRoomInfo', roomId);
                 });
             } else if (chessman && !isWinner) {
+                let rate;
+                if ((isHost && hostCups > guestCups) || (!isHost && hostCups < guestCups)) {
+                    rate = RATE_HIGH;
+                } else {
+                    rate = RATE_LOW;
+                }
+                const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+
                 socket.emit('finishGame', {
                     newCups,
                     roomId,
@@ -273,7 +280,6 @@ const Game = () => {
                 Swal.fire({
                     icon: 'success',
                     title: `${turn} won`,
-                    text: `+${newCups} cup`,
                     showConfirmButton: true,
                 }).then(() => {
                     socket.emit('getUpdateRoomInfo', roomId);

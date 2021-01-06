@@ -1,10 +1,15 @@
-import React, {Component, useEffect, useState} from 'react';
-import {axiosUser} from "../../../../../api/axiosUser";
-import {axiosAdmin} from "../../../../../api/axiosAdmin";
+import {
+    IconButton,
+    List,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Checkbox, IconButton} from '@material-ui/core';
 import CommentIcon from '@material-ui/icons/Comment';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import { axiosAdmin } from '../../../../../api/axiosAdmin';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -15,24 +20,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PlayedGames = (props) => {
-    const {userId} = props;
+    const { userId } = props;
     const classes = useStyles();
 
-    const [listGames, setListGames] = useState([])
+    const [listGames, setListGames] = useState([]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const listPlayedGames = async (userId) => {
             try {
                 const res = await axiosAdmin.get(`/manage/users/${userId}/boards`);
-                console.log("list games: ", res.data)
-                setListGames(res.data)
+                console.log('list games: ', res.data);
+                setListGames(res.data);
             } catch (error) {
                 console.log(error);
             }
         };
 
         listPlayedGames(userId);
-    }, [])
+    }, []);
 
     return (
         <List className={classes.root}>
@@ -45,7 +50,11 @@ const PlayedGames = (props) => {
                         <ListItemText primary={`Host: ${game.hostname}`} />
                         <ListItemText primary={`Guest: ${game.guestname}`} />
                         <ListItemText primary={`Winner: ${game.winner}`} />
-                        <ListItemText primary={`Created at: ${moment(game.createdAt).format('DD-MM-YYYY, hh:mm:ss')}`} />
+                        <ListItemText
+                            primary={`Created at: ${dayjs(game.createdAt).format(
+                                'DD-MM-YYYY, hh:mm:ss',
+                            )}`}
+                        />
                         <ListItemSecondaryAction>
                             <IconButton edge="end" aria-label="comments">
                                 <CommentIcon />
@@ -56,6 +65,6 @@ const PlayedGames = (props) => {
             })}
         </List>
     );
-}
+};
 
 export default PlayedGames;

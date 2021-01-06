@@ -7,6 +7,7 @@ import {
     MoodRounded,
     SportsEsportsRounded,
     StarBorderRounded,
+    VerifiedUserRounded,
 } from '@material-ui/icons';
 import React, { forwardRef } from 'react';
 import avatar from '../../../assets/images/avatar.jpg';
@@ -57,6 +58,14 @@ const Profile = ({ userInfo, open, onClose }) => {
                                 {dayjs(userInfo.createdAt).format('MM/YYYY')}{' '}
                             </Typography>
                         </div>
+                        <span className="dash">-</span>
+                        <div className="user-info-group">
+                            <VerifiedUserRounded className="info-icon" />
+                            <Typography variant="body1">
+                                {' '}
+                                {userInfo.status === 1 ? 'Activated' : 'Not Activated'}
+                            </Typography>
+                        </div>
                     </div>
 
                     <div className="user-statistic">
@@ -75,7 +84,7 @@ const Profile = ({ userInfo, open, onClose }) => {
                         <div className="user-statistic-box">
                             <StarBorderRounded />
                             <Typography variant="body1">
-                                {(userInfo.wins / userInfo.total).toFixed(2)} %
+                                {userInfo.total ? (userInfo.wins / userInfo.total).toFixed(2) : 0} %
                             </Typography>
                         </div>
                     </div>

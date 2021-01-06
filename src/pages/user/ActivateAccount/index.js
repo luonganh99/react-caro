@@ -1,9 +1,13 @@
-import { Button, CircularProgress, Container, Paper, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Typography } from '@material-ui/core';
+import { VerifiedUserRounded } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
+import { useAuthContext } from '../../../context/AuthContext';
+import './styles.scss';
 
 const ActivateAccount = () => {
+    const { authData, resetAuthData } = useAuthContext();
     const [loading, setLoading] = useState(true);
     const { hashToken } = useParams();
 
@@ -11,6 +15,11 @@ const ActivateAccount = () => {
         const verifyAccount = async () => {
             try {
                 await axiosUser.get(`auth/verify-account/${hashToken}`);
+
+                if (Object.keys(authData).length !== 0) {
+                    const userInfo = await axiosUser.get(`users/${authData.userInfo.userId}`);
+                    resetAuthData(userInfo);
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -18,22 +27,29 @@ const ActivateAccount = () => {
         };
 
         verifyAccount();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
-        <Container>
-            <Typography variant="h3">Activate your account</Typography>
-            {loading ? (
-                <CircularProgress />
-            ) : (
-                <Paper variant="outlined">
-                    <Typography variant="body1">Activate succesfully</Typography>
-                    <Link to="/home" component={Button} variant="contained" color="primary">
-                        Return Home
-                    </Link>
-                </Paper>
-            )}
-        </Container>
+        <div className="activate-container">
+            <div className="activate">
+                <Typography color="primary" variant="h1">
+                    <VerifiedUserRounded className="title" />
+                </Typography>
+                {loading ? (
+                    <CircularProgress />
+                ) : (
+                    <div className="content">
+                        <Typography variant="body1">
+                            Your Account has been activated successfully
+                        </Typography>
+                        <Button to="/home" component={Link} variant="contained" color="primary">
+                            Return Home
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

@@ -16,9 +16,10 @@ const HistoryBox = ({ listHistoryItem, hostname, guestname, handleHistoryItemCli
                     <Typography>{hostname}</Typography>
                     <Typography>(X)</Typography>
                 </div>
+
                 <div className="header-item">
                     <Typography>{guestname}</Typography>
-                    <Typography>(O)</Typography>
+                    <Typography>{guestname && '(O)'} </Typography>
                 </div>
             </div>
             <div className="list-history-item">

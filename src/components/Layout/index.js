@@ -40,7 +40,7 @@ const Layout = ({ children, location }) => {
     };
 
     return (
-        <div>
+        <div className="layout">
             <Header />
             {children}
             <div className="online-user">

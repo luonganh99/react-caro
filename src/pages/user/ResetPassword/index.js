@@ -1,11 +1,42 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Container, TextField } from '@material-ui/core';
-import React from 'react';
+import {
+    Avatar,
+    Button,
+    CircularProgress,
+    Container,
+    makeStyles,
+    Paper,
+    TextField,
+    Typography,
+} from '@material-ui/core';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import * as yup from 'yup';
 import { axiosUser } from '../../../api/axiosUser';
-import Swal from 'sweetalert2';
+
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        marginTop: theme.spacing(20),
+        paddingBottom: theme.spacing(3),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '80%',
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(2, 0, 2),
+    },
+}));
 
 const schema = yup.object().shape({
     password: yup.string().required('New password is required'),
@@ -13,20 +44,25 @@ const schema = yup.object().shape({
 });
 
 const ResetPassword = () => {
+    const classes = useStyles();
+    const [loading, setLoading] = useState(false);
     const { register, handleSubmit, errors } = useForm({
         resolver: yupResolver(schema),
     });
     const { hashToken } = useParams();
     const history = useHistory();
-    console.log(hashToken);
 
     const onSubmit = async (data) => {
         const { password } = data;
         try {
+            setLoading(true);
+
             const res = await axiosUser.post('/auth/reset-password', {
                 hashToken,
                 password,
             });
+
+            setLoading(false);
 
             Swal.fire({
                 title: 'Reset your password successfully',
@@ -37,37 +73,56 @@ const ResetPassword = () => {
             });
         } catch (error) {
             console.log(error);
+            setLoading(false);
         }
     };
 
     return (
-        <Container>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField
-                    inputRef={register}
-                    name="password"
-                    label="New Password"
-                    type="password"
-                    variant="outlined"
-                    error={!!errors?.password}
-                    helperText={errors?.password?.message}
-                    autoFocus
-                    required
-                />
-                <TextField
-                    inputRef={register}
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    type="password"
-                    variant="outlined"
-                    error={!!errors?.confirmPassword}
-                    helperText={errors?.confirmPassword?.message}
-                    required
-                />
-                <Button type="submit" variant="contained" color="primary">
-                    Reset your password
-                </Button>
-            </form>
+        <Container maxWidth="sm">
+            <Paper className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Reset Password
+                </Typography>
+                <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+                    <TextField
+                        inputRef={register}
+                        name="password"
+                        label="New Password"
+                        type="password"
+                        variant="outlined"
+                        error={!!errors?.password}
+                        helperText={errors?.password?.message}
+                        autoFocus
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <TextField
+                        inputRef={register}
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        type="password"
+                        variant="outlined"
+                        error={!!errors?.confirmPassword}
+                        helperText={errors?.confirmPassword?.message}
+                        fullWidth
+                        required
+                        margin="normal"
+                    />
+                    <Button
+                        className={classes.submit}
+                        fullWidth
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        {loading ? <CircularProgress /> : 'Reset your password'}
+                    </Button>
+                </form>
+            </Paper>
         </Container>
     );
 };

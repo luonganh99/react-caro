@@ -1,14 +1,16 @@
 import {
     Avatar,
     Button,
+    CircularProgress,
     Container,
     Grid,
     makeStyles,
+    Paper,
     TextField,
     Typography,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
 import { axiosUser } from '../../../api/axiosUser';
@@ -23,6 +25,7 @@ import { useAuthContext } from '../../../context/AuthContext';
 const useStyles = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
+        paddingBottom: theme.spacing(3),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -32,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%',
+        width: '80%',
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -87,16 +90,18 @@ const Login = () => {
     const { register, handleSubmit, errors, setError } = useForm({
         resolver: yupResolver(schema),
     });
-
-    console.log(errors);
+    const [loading, setLoading] = useState(false);
 
     const onSubmit = async (data) => {
         try {
+            setLoading(true);
             const { username, password } = data;
             const res = await axiosUser.post('/auth/login', {
                 username,
                 password,
             });
+            setLoading(false);
+
             if (res.status === 'success') {
                 onLogin(res.data);
                 history.push('/home');
@@ -111,6 +116,7 @@ const Login = () => {
                 }
             }
             console.log(error);
+            setLoading(false);
         }
     };
 
@@ -154,8 +160,8 @@ const Login = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <div className={classes.paper}>
+        <Container component="main" maxWidth="sm">
+            <Paper className={classes.paper}>
                 <Avatar className={classes.avatar}>
                     <LockOutlinedIcon />
                 </Avatar>
@@ -195,7 +201,7 @@ const Login = () => {
                         color="primary"
                         className={classes.submit}
                     >
-                        Login
+                        {loading ? <CircularProgress /> : 'Login'}
                     </Button>
                     <Grid container>
                         <Grid item xs>
@@ -228,7 +234,7 @@ const Login = () => {
                     icon={<FaFacebookSquare className={classes.fbIcon} />}
                     cssClass={classes.facebookBtn}
                 />
-            </div>
+            </Paper>
         </Container>
     );
 };

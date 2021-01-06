@@ -1,13 +1,7 @@
-import { Button, Container, TextField, Typography } from '@material-ui/core';
-import {
-    EqualizerRounded,
-    VideogameAssetRounded,
-    ViewList,
-    ViewListRounded,
-} from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
+import { Button, Container, Typography } from '@material-ui/core';
+import { EqualizerRounded, VideogameAssetRounded, ViewListRounded } from '@material-ui/icons';
+import React, { useEffect } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
-import { axiosUser } from '../../../api/axiosUser';
 import socket from '../../../commons/socket';
 import { useAuthContext } from '../../../context/AuthContext';
 import './styles.scss';
@@ -33,7 +27,7 @@ const Home = () => {
     };
 
     return (
-        <Container className="container">
+        <Container className="home">
             <Typography className="title" variant="h1" color="primary">
                 Caro Online
             </Typography>

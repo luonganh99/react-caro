@@ -2,22 +2,26 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
     Avatar,
     Button,
+    CircularProgress,
     Container,
     Grid,
     makeStyles,
+    Paper,
     TextField,
     Typography,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import * as yup from 'yup';
 import { axiosUser } from '../../../api/axiosUser';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(7),
+        paddingBottom: theme.spacing(3),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -27,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%',
+        width: '80%',
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -49,9 +53,11 @@ const SignUp = () => {
         resolver: yupResolver(schema),
     });
     const history = useHistory();
+    const [loading, setLoading] = useState(false);
 
     const onSubmit = async (data) => {
         try {
+            setLoading(true);
             const { username, password, fullname, email } = data;
 
             const res = await axiosUser.post('/auth/signup', {
@@ -61,8 +67,17 @@ const SignUp = () => {
                 email,
             });
 
+            setLoading(false);
+
             if (res.status === 'success') {
-                history.push('/login');
+                Swal.fire({
+                    icon: 'info',
+                    title: "We've just send you an email",
+                    text: 'Please check it to complete activate your account',
+                    showConfirmButton: true,
+                }).then(() => {
+                    history.push('/login');
+                });
             }
         } catch (error) {
             if (error.data.errors) {
@@ -78,8 +93,8 @@ const SignUp = () => {
     };
 
     return (
-        <Container maxWidth="xs">
-            <div className={classes.paper}>
+        <Container maxWidth="sm">
+            <Paper className={classes.paper}>
                 <Avatar className={classes.avatar}>
                     <LockOutlinedIcon />
                 </Avatar>
@@ -153,7 +168,7 @@ const SignUp = () => {
                         color="primary"
                         className={classes.submit}
                     >
-                        Sign up
+                        {loading ? <CircularProgress /> : 'Sign up'}
                     </Button>
                     <Grid container>
                         <Grid item xs></Grid>
@@ -164,7 +179,7 @@ const SignUp = () => {
                         </Grid>
                     </Grid>
                 </form>
-            </div>
+            </Paper>
         </Container>
     );
 };
