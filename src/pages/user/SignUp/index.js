@@ -168,7 +168,11 @@ const SignUp = () => {
                         color="primary"
                         className={classes.submit}
                     >
-                        {loading ? <CircularProgress /> : 'Sign up'}
+                        {loading ? (
+                            <CircularProgress size={25} thickness={4} color="white" />
+                        ) : (
+                            'Sign up'
+                        )}
                     </Button>
                     <Grid container>
                         <Grid item xs></Grid>

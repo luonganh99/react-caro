@@ -8,7 +8,15 @@
         right: 50px;
 
         color: #fff;
-        background-color: #000;
-        border: 1px solid rgb(74, 179, 25);
+        background-color: #113270;
+        border-radius: 50%;
+        padding: 5px;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.4);
+            opacity: 0.9;
+        }
     }
 }

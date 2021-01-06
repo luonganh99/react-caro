@@ -206,7 +206,6 @@ const RoomList = () => {
                             variant="contained"
                             color="primary"
                             startIcon={<AddBoxRounded />}
-                            size="large"
                             className="create-btn"
                         >
                             Create
@@ -216,7 +215,6 @@ const RoomList = () => {
                             variant="contained"
                             color="primary"
                             startIcon={<MeetingRoomRounded />}
-                            size="large"
                             className="join-btn"
                         >
                             Join

@@ -1,11 +1,10 @@
-import { Avatar, IconButton, Typography } from '@material-ui/core';
-import { EmojiEventsRounded, HistoryRounded, PageviewRounded } from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
-import { axiosUser } from '../../../api/axiosUser';
+import { Avatar, Button, Typography } from '@material-ui/core';
+import { EmojiEventsRounded, HistoryRounded, PagesOutlined } from '@material-ui/icons';
 import dayjs from 'dayjs';
-
-import './styles.scss';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { axiosUser } from '../../../api/axiosUser';
+import './styles.scss';
 
 const History = ({ userInfo, onClose }) => {
     const [boardList, setBoardList] = useState([]);
@@ -16,7 +15,6 @@ const History = ({ userInfo, onClose }) => {
             try {
                 const res = await axiosUser.get('/boards');
 
-                console.log(res);
                 setBoardList(res.data.boardList);
             } catch (error) {
                 console.log(error);
@@ -46,29 +44,47 @@ const History = ({ userInfo, onClose }) => {
                         key={board.boardId}
                     >
                         <div className="user-group">
-                            <Avatar />
-                            <Typography variant="body1">{board.hostname}</Typography>
+                            {board.hostname === userInfo.username ? (
+                                <Avatar
+                                    className="avatar"
+                                    alt={userInfo.username}
+                                    src={userInfo.avatar}
+                                />
+                            ) : (
+                                <Typography variant="body1">{board.hostname}</Typography>
+                            )}
                         </div>
 
                         <div className="history-info">
                             <div className="time">
                                 <Typography variant="body1">
-                                    {dayjs(board.finishedAt).format('HH:mm A - DD/MM/YYYY')}
+                                    {dayjs(board.finishedAt).format('DD/MM/YYYY')}
                                 </Typography>
                             </div>
+                            <div>You {board.winner === userInfo.username ? 'Win' : 'Lose'}</div>
                             <div className="cup">
                                 <EmojiEventsRounded />
                                 <Typography variant="body1">{board.cups}</Typography>
                             </div>
-                            <IconButton onClick={() => handleReviewClick(board.boardId)}>
-                                <PageviewRounded />
-                                <Typography variant="body1">Review</Typography>
-                            </IconButton>
+                            <Button
+                                variant="contained"
+                                onClick={() => handleReviewClick(board.boardId)}
+                                startIcon={<PagesOutlined />}
+                            >
+                                Review
+                            </Button>
                         </div>
 
                         <div className="user-group">
-                            <Avatar />
-                            <Typography variant="body1">{board.guestname}</Typography>
+                            {board.guestname === userInfo.username ? (
+                                <Avatar
+                                    className="avatar"
+                                    alt={userInfo.username}
+                                    src={userInfo.avatar}
+                                />
+                            ) : (
+                                <Typography variant="body1">{board.guestname}</Typography>
+                            )}
                         </div>
                     </div>
                 ))}

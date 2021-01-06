@@ -37,7 +37,7 @@ const ActivateAccount = () => {
                     <VerifiedUserRounded className="title" />
                 </Typography>
                 {loading ? (
-                    <CircularProgress />
+                    <CircularProgress size={25} thickness={4} color="white" />
                 ) : (
                     <div className="content">
                         <Typography variant="body1">

@@ -6,7 +6,6 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemText,
-    Paper,
     Slide,
     Typography,
 } from '@material-ui/core';
@@ -16,7 +15,6 @@ import avatar from '../../assets/images/avatar.jpg';
 import socket from '../../commons/socket';
 import { useAuthContext } from '../../context/AuthContext';
 import BadgeAvatar from '../BadgeAvatar';
-import './styles.scss';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -24,8 +22,12 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: 600,
         margin: '50px auto',
     },
+    title: {
+        textTransform: 'uppercase',
+        fontWeight: 'bold',
+    },
     paper: {
-        height: '90vh',
+        height: '80vh',
         display: 'flex',
         flexFlow: 'column wrap',
         alignItems: 'center',
@@ -43,14 +45,20 @@ const OnlineDialog = ({ openOnline, handleCloseOnline, handleInvite, isInvite = 
     const classes = useStyles();
     const [userList, setUserList] = useState([]);
     const { authData } = useAuthContext();
-
+    console.log(userList);
     useEffect(() => {
         socket.on('getOnlineUserRes', (data) => {
-            setUserList(
-                data
-                    .map((uname) => uname[0])
-                    .filter((uname) => uname !== authData.userInfo.username),
-            );
+            const formatedOnlineUser = [];
+            for (let username in data) {
+                if (username !== authData.userInfo.username) {
+                    formatedOnlineUser.push({
+                        username,
+                        avatar: data[username].avatar,
+                    });
+                }
+            }
+
+            setUserList(formatedOnlineUser);
         });
     }, []);
 
@@ -70,21 +78,20 @@ const OnlineDialog = ({ openOnline, handleCloseOnline, handleInvite, isInvite = 
             keepMounted
         >
             <DialogContent>
-                <Paper className={classes.paper}>
-                    <Typography variant="h4">Online User</Typography>
+                <div className={classes.paper}>
+                    <Typography color="primary" className={classes.title} variant="h4">
+                        Online User
+                    </Typography>
                     <List dense className={classes.list}>
-                        {userList.map((username) => {
+                        {userList.map((user) => {
                             return (
-                                <ListItem key={username} button>
+                                <ListItem key={user.username} button>
                                     <ListItemAvatar>
-                                        <BadgeAvatar
-                                            alt={`Avatar n°${username + 1}`}
-                                            src={avatar}
-                                        />
+                                        <BadgeAvatar alt={user.username} src={user.avatar} />
                                     </ListItemAvatar>
-                                    <ListItemText primary={`${username}`} />
+                                    <ListItemText primary={`${user.username}`} />
                                     {isInvite && (
-                                        <Button onClick={() => handleInvite(username)}>
+                                        <Button onClick={() => handleInvite(user.username)}>
                                             Invite
                                         </Button>
                                     )}
@@ -92,7 +99,7 @@ const OnlineDialog = ({ openOnline, handleCloseOnline, handleInvite, isInvite = 
                             );
                         })}
                     </List>
-                </Paper>
+                </div>
             </DialogContent>
         </Dialog>
     );

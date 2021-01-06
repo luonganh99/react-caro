@@ -70,19 +70,19 @@ const Profile = ({ userInfo, open, onClose }) => {
 
                     <div className="user-statistic">
                         <div className="user-statistic-box">
-                            <EmojiEventsRounded />
+                            <EmojiEventsRounded className="user-statistic-icon" />
                             <Typography variant="body1">{userInfo.cups} cups</Typography>
                         </div>
                         <div className="user-statistic-box">
-                            <SportsEsportsRounded />
+                            <SportsEsportsRounded className="user-statistic-icon" />
                             <Typography variant="body1">{userInfo.total} games</Typography>
                         </div>
                         <div className="user-statistic-box">
-                            <MoodRounded />
+                            <MoodRounded className="user-statistic-icon" />
                             <Typography variant="body1">{userInfo.wins} wins</Typography>
                         </div>
                         <div className="user-statistic-box">
-                            <StarBorderRounded />
+                            <StarBorderRounded className="user-statistic-icon" />
                             <Typography variant="body1">
                                 {userInfo.total ? (userInfo.wins / userInfo.total).toFixed(2) : 0} %
                             </Typography>

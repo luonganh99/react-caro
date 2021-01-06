@@ -97,7 +97,11 @@ const ForgotPassword = () => {
                         color="primary"
                         type="submit"
                     >
-                        {loading ? <CircularProgress /> : 'Send me password reset email'}
+                        {loading ? (
+                            <CircularProgress size={25} thickness={4} color="white" />
+                        ) : (
+                            'Send me password reset email'
+                        )}
                     </Button>
                     <Grid container>
                         <Grid item xs></Grid>

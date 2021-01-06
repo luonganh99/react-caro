@@ -119,7 +119,11 @@ const ResetPassword = () => {
                         variant="contained"
                         color="primary"
                     >
-                        {loading ? <CircularProgress /> : 'Reset your password'}
+                        {loading ? (
+                            <CircularProgress size={25} thickness={4} color="white" />
+                        ) : (
+                            'Reset your password'
+                        )}
                     </Button>
                 </form>
             </Paper>

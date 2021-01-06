@@ -34,6 +34,7 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         setAuthData(initialAuthData);
+        socket.emit('offline');
     };
 
     const resetAuthData = (userInfo) => {
