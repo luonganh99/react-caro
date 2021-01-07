@@ -136,6 +136,14 @@ const Login = () => {
         } catch (error) {
             setLoading(false);
 
+            if (error.data.errors) {
+                for (let err of Object.keys(error.data.errors)) {
+                    setError(`${err}`, {
+                        type: 'apiValidate',
+                        message: error.data.errors[err],
+                    });
+                }
+            }
             console.log(error);
         }
     };
@@ -161,6 +169,14 @@ const Login = () => {
         } catch (error) {
             setLoading(false);
 
+            if (error.data.errors) {
+                for (let err of Object.keys(error.data.errors)) {
+                    setError(`${err}`, {
+                        type: 'apiValidate',
+                        message: error.data.errors[err],
+                    });
+                }
+            }
             console.log(error);
         }
     };

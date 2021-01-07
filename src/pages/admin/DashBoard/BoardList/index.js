@@ -9,8 +9,8 @@ const BoardList = (props) => {
                 <TextField source={'hostname'} />
                 <TextField source={'guestname'} />
                 <TextField source={'winner'} />
-                <DateField source={'createdAt'} />
-                <DateField source={'finishedAt'} />
+                <DateField source={'createdAt'} showTime={true} />
+                <DateField source={'finishedAt'} showTime={true} />
                 <TextField source={'cups'} />
             </Datagrid>
         </List>

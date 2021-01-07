@@ -8,6 +8,8 @@ import {
     TabbedShowLayout,
     TextField,
 } from 'react-admin';
+import MyBooleanField from '../MyBooleanField';
+import MyTextField from '../MyTextField';
 import PostShowActions from './UserShowActions';
 
 const UserShow = (props) => {
@@ -20,23 +22,23 @@ const UserShow = (props) => {
                     <TextField source="username" />
                     <TextField source="fullname" />
                     <TextField source="email" />
-                    <TextField source="totals" />
+                    <DateField label="Created at" source="createdAt" showTime={true} />
+                    <TextField source="total" />
                     <TextField source="wins" />
                     <TextField source="cups" />
-                    <TextField source="status" />
-                    <TextField source="role" />
-                    <DateField label="Created at" source="created_at" />
+                    <MyBooleanField label="Active" addLabel={true} source="status" />
+                    <MyTextField label="Role" addLabel={true} source="role" />
                 </Tab>
                 <Tab label="History" path="boards">
                     <ReferenceManyField reference="boards" target="userId" addLabel={false}>
                         <Datagrid rowClick={'show'}>
-                            <TextField source={'boardId'} />
-                            <TextField source={'hostname'} />
-                            <TextField source={'guestname'} />
-                            <TextField source={'winner'} />
-                            <DateField source={'createdAt'} />
-                            <DateField source={'finishedAt'} />
-                            <TextField source={'cups'} />
+                            <TextField source="boardId" />
+                            <TextField source="hostname" />
+                            <TextField source="guestname" />
+                            <TextField source="winner" />
+                            <DateField source="createdAt" showTime={true} />
+                            <DateField source="finishedAt" showTime={true} />
+                            <TextField source="cups" />
                         </Datagrid>
                     </ReferenceManyField>
                 </Tab>

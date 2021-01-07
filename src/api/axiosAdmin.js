@@ -13,7 +13,7 @@ axiosAdmin.interceptors.request.use(
         return request;
     },
     (error) => {
-        return Promise.reject(error);
+        return Promise.reject(error.response);
     },
 );
 
@@ -24,6 +24,6 @@ axiosAdmin.interceptors.response.use(
         }
     },
     (error) => {
-        return Promise.reject(error);
+        return Promise.reject(error.response);
     },
 );
