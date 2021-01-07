@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { axiosUser } from '../../../api/axiosUser';
 import socket from '../../../commons/socket';
 import { BOARD_SIZE } from '../../../config/board.config';
-import { RATE_HIGH, RATE_LOW } from '../../../config/game.config';
+import { MAX_CUPS, MIN_CUPS, RATE_HIGH, RATE_LOW } from '../../../config/game.config';
 import { useAuthContext } from '../../../context/AuthContext';
 import useQuery from '../../../hooks/useQuery';
 import Board from './Board';
@@ -14,6 +14,18 @@ import HistoryBox from './HistoryBox';
 import InfoBox from './InfoBox';
 import PlayerBox from './PlayerBox';
 import './styles.scss';
+
+const filterCups = (cups) => {
+    if (cups >= MAX_CUPS) {
+        return MAX_CUPS;
+    }
+
+    if (cups <= MIN_CUPS) {
+        return MIN_CUPS;
+    }
+
+    return cups;
+};
 
 const Game = () => {
     const { authData, resetAuthData } = useAuthContext();
@@ -241,7 +253,7 @@ const Game = () => {
                 } else {
                     rate = RATE_HIGH;
                 }
-                const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+                const newCups = filterCups(Math.round(Math.abs(hostCups - guestCups) * rate, 0));
 
                 Swal.fire({
                     icon: 'success',
@@ -258,7 +270,7 @@ const Game = () => {
                 } else {
                     rate = RATE_LOW;
                 }
-                const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+                const newCups = filterCups(Math.round(Math.abs(hostCups - guestCups) * rate, 0));
 
                 socket.emit('finishGame', {
                     newCups,
@@ -309,11 +321,11 @@ const Game = () => {
         if (boardId && !isViewer) {
             let rate;
             if ((isHost && hostCups > guestCups) || (!isHost && hostCups < guestCups)) {
-                rate = RATE_LOW;
-            } else {
                 rate = RATE_HIGH;
+            } else {
+                rate = RATE_LOW;
             }
-            const newCups = Math.round(Math.abs(hostCups - guestCups) * rate, 0);
+            const newCups = filterCups(Math.round(Math.abs(hostCups - guestCups) * rate, 0));
 
             Swal.fire({
                 icon: 'info',

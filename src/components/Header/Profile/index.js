@@ -84,7 +84,10 @@ const Profile = ({ userInfo, open, onClose }) => {
                         <div className="user-statistic-box">
                             <StarBorderRounded className="user-statistic-icon" />
                             <Typography variant="body1">
-                                {userInfo.total ? (userInfo.wins / userInfo.total).toFixed(2) : 0} %
+                                {userInfo.total
+                                    ? (userInfo.wins / userInfo.total).toFixed(2) * 100
+                                    : 0}{' '}
+                                %
                             </Typography>
                         </div>
                     </div>

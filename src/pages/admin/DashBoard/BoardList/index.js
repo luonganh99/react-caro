@@ -1,18 +1,20 @@
-import React, {Component} from 'react';
-import {List, Datagrid, TextField, DateField, EditButton, DeleteButton, TextInput, Filter, ReferenceInput} from 'react-admin';
-import SelectInput from "@material-ui/core/Select/SelectInput";
+import React from 'react';
+import { Datagrid, DateField, List, TextField } from 'react-admin';
 
 const BoardList = (props) => {
-    return <List {...props} pagination={false}>
-        <Datagrid rowClick={"show"}>
-            <TextField source={'boardId'}/>
-            <TextField source={'hostname'}/>
-            <TextField source={'guestname'}/>
-            <TextField source={'winner'}/>
-            <DateField source={'createdAt'}/>
-        </Datagrid>
-    </List>
-}
-
+    return (
+        <List {...props} pagination={false}>
+            <Datagrid rowClick={'show'}>
+                <TextField source={'boardId'} />
+                <TextField source={'hostname'} />
+                <TextField source={'guestname'} />
+                <TextField source={'winner'} />
+                <DateField source={'createdAt'} />
+                <DateField source={'finishedAt'} />
+                <TextField source={'cups'} />
+            </Datagrid>
+        </List>
+    );
+};
 
 export default BoardList;
