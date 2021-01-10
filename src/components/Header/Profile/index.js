@@ -1,4 +1,4 @@
-import { Avatar, Dialog, DialogContent, Slide, Typography } from '@material-ui/core';
+import { Avatar, Dialog, DialogContent, Link, Slide, Typography } from '@material-ui/core';
 import {
     AccountCircleRounded,
     DateRangeRounded,
@@ -14,12 +14,25 @@ import avatar from '../../../assets/images/avatar.jpg';
 import History from '../History';
 import dayjs from 'dayjs';
 import './styles.scss';
+import { axiosUser } from '../../../api/axiosUser';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const Profile = ({ userInfo, open, onClose }) => {
+    const handleSendEmail = async () => {
+        try {
+            await axiosUser.get('/auth/send-email-verify');
+            toast.success('Send email succefully. Please check your email!', {
+                position: 'top-right',
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <Dialog
             open={open}
@@ -61,10 +74,18 @@ const Profile = ({ userInfo, open, onClose }) => {
                         <span className="dash">-</span>
                         <div className="user-info-group">
                             <VerifiedUserRounded className="info-icon" />
-                            <Typography variant="body1">
-                                {' '}
-                                {userInfo.status === 1 ? 'Activated' : 'Not Activated'}
-                            </Typography>
+                            {userInfo.status === 1 ? (
+                                <Typography variant="body1">Activated</Typography>
+                            ) : (
+                                <Typography variant="body1">
+                                    Not activated yet.Click
+                                    <Link style={{ cursor: 'pointer' }} onClick={handleSendEmail}>
+                                        {' '}
+                                        here{' '}
+                                    </Link>
+                                    to send email
+                                </Typography>
+                            )}
                         </div>
                     </div>
 
@@ -95,6 +116,7 @@ const Profile = ({ userInfo, open, onClose }) => {
                     <History userInfo={userInfo} onClose={onClose} />
                 </DialogContent>
             }
+            <ToastContainer />
         </Dialog>
     );
 };
