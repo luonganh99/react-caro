@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { axiosUser } from '../api/axiosUser';
 import socket from '../commons/socket';
 
 export const AuthContext = createContext(null);

@@ -1,39 +1,11 @@
 import { Button, TextField } from '@material-ui/core';
 import { SendOutlined } from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from '../../../../commons/socket';
 import { useAuthContext } from '../../../../context/AuthContext';
 import MessagesHistory from './MessagesHistory';
 import './styles.scss';
-
-// const fakeMessages = [
-//     {
-//         sender: 'lanhnh',
-//         content: 'Hi there',
-//         isMine: false,
-//     },
-//     {
-//         sender: 'sonnt',
-//         content: 'Hi :D',
-//         isMine: true,
-//     },
-//     {
-//         sender: 'taidt',
-//         content: 'How are you doing',
-//         isMine: false,
-//     },
-//     {
-//         sender: 'sonnt',
-//         content: "Yeah I'm good",
-//         isMine: true,
-//     },
-//     {
-//         sender: 'sonnt',
-//         content: 'Very longggg longgggg message here . . . . . ..  . . . . ',
-//         isMine: true,
-//     },
-// ];
 
 const ChatBox = ({ boardId, roomId, listMessages, setListMessages }) => {
     const { register, handleSubmit, reset } = useForm();
@@ -50,6 +22,7 @@ const ChatBox = ({ boardId, roomId, listMessages, setListMessages }) => {
                 }),
             );
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onSendMyMessage = (data) => {

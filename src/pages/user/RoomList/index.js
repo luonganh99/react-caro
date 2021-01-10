@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     InputLabel,
     MenuItem,
@@ -122,6 +121,7 @@ const RoomList = () => {
         return () => {
             socket.removeAllListeners();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleOpenCreateForm = () => {

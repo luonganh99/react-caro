@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import ChatMessage from '../ChatMessage';
 import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import ChatMessage from '../ChatMessage';
 
 const useStyles = makeStyles({
     historyContainer: {

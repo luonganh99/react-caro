@@ -108,6 +108,7 @@ const ReviewGame = () => {
         };
 
         fetchBoard();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [boardId]);
 
     const handleHistoryItemClick = (index) => {

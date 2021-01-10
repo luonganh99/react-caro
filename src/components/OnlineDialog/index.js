@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { forwardRef, useEffect, useState } from 'react';
-import avatar from '../../assets/images/avatar.jpg';
 import socket from '../../commons/socket';
 import { useAuthContext } from '../../context/AuthContext';
 import BadgeAvatar from '../BadgeAvatar';
@@ -45,7 +44,6 @@ const OnlineDialog = ({ openOnline, handleCloseOnline, handleInvite, isInvite = 
     const classes = useStyles();
     const [userList, setUserList] = useState([]);
     const { authData } = useAuthContext();
-    console.log(userList);
     useEffect(() => {
         socket.on('getOnlineUserRes', (data) => {
             const formatedOnlineUser = [];
@@ -60,6 +58,7 @@ const OnlineDialog = ({ openOnline, handleCloseOnline, handleInvite, isInvite = 
 
             setUserList(formatedOnlineUser);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
