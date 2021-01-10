@@ -66,7 +66,7 @@ const httpClient = (url, options = {}) => {
 const DashBoard = () => {
     return (
         <Admin
-            dataProvider={restProvider('http://localhost:4000/admin/manage', httpClient)}
+            dataProvider={restProvider(process.env.REACT_APP_ADMIN_MANAGE_BASE_URL, httpClient)}
             authProvider={authProvider}
             dashboard={HomePage}
         >
