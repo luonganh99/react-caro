@@ -230,6 +230,7 @@ const RoomList = () => {
                         onRowClicked={handleRowClick}
                         pointerOnHover
                         highlightOnHover
+                        noDataComponent="There are rooms to display"
                     />
                 </div>
             </Paper>
