@@ -165,7 +165,7 @@ const ReviewGame = () => {
                                     <Typography>
                                         Winner:{' '}
                                         <span style={{ fontWeight: 'bold' }}>
-                                            {boardInfo.winner}
+                                            {boardInfo.winner === null ? 'Draw' : boardInfo.winner}
                                         </span>{' '}
                                     </Typography>
                                 </div>

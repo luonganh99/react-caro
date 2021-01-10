@@ -39,7 +39,11 @@ const History = ({ userInfo, onClose }) => {
                 {boardList.map((board) => (
                     <div
                         className={`history-box ${
-                            board.winner === userInfo.username ? 'win' : 'lose'
+                            board.winner === userInfo.username
+                                ? 'win'
+                                : board.winner === null
+                                ? 'draw'
+                                : 'lose'
                         }`}
                         key={board.boardId}
                     >
@@ -61,7 +65,13 @@ const History = ({ userInfo, onClose }) => {
                                     {dayjs(board.finishedAt).format('DD/MM/YYYY')}
                                 </Typography>
                             </div>
-                            <div>You {board.winner === userInfo.username ? 'Win' : 'Lose'}</div>
+                            <div>
+                                {board.winner === userInfo.username
+                                    ? 'win'
+                                    : board.winner === null
+                                    ? 'draw'
+                                    : 'lose'}
+                            </div>
                             <div className="cup">
                                 <EmojiEventsRounded />
                                 <Typography variant="body1">{board.cups}</Typography>

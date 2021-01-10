@@ -130,6 +130,8 @@ const Login = () => {
             });
 
             if (apiRes.status === 'success') {
+                setLoading(false);
+
                 onLogin(apiRes.data);
                 history.push('/home');
             }

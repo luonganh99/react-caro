@@ -60,4 +60,4 @@ const PlayerBox = ({
     );
 };
 
-export default PlayerBox;
+export default React.memo(PlayerBox);

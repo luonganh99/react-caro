@@ -41,10 +41,13 @@ const authProvider = {
     getPermissions: () => Promise.resolve(),
     getIdentity: () => {
         try {
-            const { userId: id, username: fullName, avatar } = JSON.parse(
-                localStorage.getItem('adminInfo'),
-            );
-            return Promise.resolve({ id, fullName, avatar });
+            if (localStorage.getItem('adminInfo')) {
+                const { userId: id, username: fullName, avatar } = JSON.parse(
+                    localStorage.getItem('adminInfo'),
+                );
+                return Promise.resolve({ id, fullName, avatar });
+            }
+            return Promise.resolve();
         } catch (error) {
             return Promise.reject(error);
         }

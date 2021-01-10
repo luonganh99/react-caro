@@ -17,9 +17,11 @@ const Layout = ({ children, location }) => {
 
     useEffect(() => {
         socket.on('inviteReq', (data) => {
+            console.log(data);
             Swal.fire({
                 icon: 'question',
-                title: `Do you want to join room ${data.roomId}`,
+                title: 'Invitation',
+                text: `${data.hostname} invited you to join room ${data.roomId}`,
                 showConfirmButton: true,
                 showCancelButton: true,
             }).then((result) => {

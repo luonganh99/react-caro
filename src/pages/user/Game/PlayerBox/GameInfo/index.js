@@ -24,11 +24,11 @@ const GameInfo = ({
     handleResign,
     handleDraw,
 }) => {
-    const renderer = ({ seconds }) => {
+    const renderer = ({ minutes, seconds }) => {
         return (
             <div className="count-down">
                 <AccessTimeRounded />
-                <Typography>{seconds}</Typography>
+                <Typography>{minutes * 60 + seconds} s</Typography>
             </div>
         );
     };
@@ -117,4 +117,4 @@ const GameInfo = ({
     );
 };
 
-export default GameInfo;
+export default React.memo(GameInfo);

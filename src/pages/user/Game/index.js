@@ -1,5 +1,5 @@
 import { Container, Grid, makeStyles, Paper } from '@material-ui/core';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { axiosUser } from '../../../api/axiosUser';
@@ -299,7 +299,7 @@ const Game = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isWinner]);
 
-    const handleToggleReady = () => {
+    const handleToggleReady = useCallback(() => {
         if (isViewer) {
             return;
         }
@@ -315,9 +315,9 @@ const Game = () => {
                 return !prevGuestReady;
             });
         }
-    };
+    }, [isViewer, roomId, isHost]);
 
-    const handleLeaveRoom = () => {
+    const handleLeaveRoom = useCallback(() => {
         if (boardId && !isViewer) {
             let rate;
             if ((isHost && hostCups > guestCups) || (!isHost && hostCups < guestCups)) {
@@ -352,7 +352,17 @@ const Game = () => {
             socket.emit('leaveRoom', roomId);
             history.push('/home');
         }
-    };
+    }, [
+        authData.userInfo.userId,
+        boardId,
+        guestCups,
+        history,
+        hostCups,
+        isHost,
+        isViewer,
+        resetAuthData,
+        roomId,
+    ]);
 
     const handleClickSquare = (pos) => {
         if (isViewer) return;
@@ -504,15 +514,15 @@ const Game = () => {
         }
     };
 
-    const handleTimeout = () => {
+    const handleTimeout = useCallback(() => {
         if (chessman && turn !== chessman) {
             setIsWinner(true);
         } else {
             setIsWinner(false);
         }
-    };
+    }, [chessman, turn]);
 
-    const handleResign = () => {
+    const handleResign = useCallback(() => {
         if (boardId && !isViewer) {
             Swal.fire({
                 icon: 'question',
@@ -525,9 +535,9 @@ const Game = () => {
                 }
             });
         }
-    };
+    }, [boardId, isViewer, roomId]);
 
-    const handleDraw = () => {
+    const handleDraw = useCallback(() => {
         if (boardId && !isViewer) {
             Swal.fire({
                 icon: 'question',
@@ -540,7 +550,7 @@ const Game = () => {
                 }
             });
         }
-    };
+    }, [boardId, isViewer, roomId]);
 
     const handleInvite = (username) => {
         socket.emit('invite', { roomId, reciever: username });

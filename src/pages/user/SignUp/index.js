@@ -67,9 +67,9 @@ const SignUp = () => {
                 email,
             });
 
-            setLoading(false);
-
             if (res.status === 'success') {
+                setLoading(false);
+
                 Swal.fire({
                     icon: 'info',
                     title: "We've just send you an email",
@@ -88,6 +88,7 @@ const SignUp = () => {
                     });
                 }
             }
+            setLoading(false);
             console.log(error);
         }
     };
