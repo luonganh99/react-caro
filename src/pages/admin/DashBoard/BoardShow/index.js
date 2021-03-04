@@ -1,5 +1,5 @@
 import React from 'react';
-import { Show, Tab, TabbedShowLayout, TextField } from 'react-admin';
+import { DateField, Show, Tab, TabbedShowLayout, TextField } from 'react-admin';
 import ChatsHistory from './ChatsHistory';
 
 const BoardShow = (props) => {
@@ -13,8 +13,8 @@ const BoardShow = (props) => {
                     <TextField source="guestname" />
                     <TextField source="status" />
                     <TextField source="winner" />
-                    <TextField source="createdAt" />
-                    <TextField source="finishedAt" />
+                    <DateField source="createdAt" showTime={true} />
+                    <DateField source="finishedAt" showTime={true} />
                 </Tab>
                 <Tab label={'Chats history'}>
                     <ChatsHistory boardId={props.id} />
