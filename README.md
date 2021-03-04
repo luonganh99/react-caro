@@ -33,4 +33,4 @@
 
 ## Demo
 
--   Link: https://online-caro.netlify.app/login
+-   Link: https://online-caro.netlify.app
